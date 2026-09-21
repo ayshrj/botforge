@@ -7,8 +7,6 @@ export {
   type HeadwearProps,
 } from "./types";
 
-export { HEADWEAR_GEOMETRY } from "./headwear-geometry";
-
 export { HEADWEAR_REGISTRY, getHeadwearAsset } from "./registry";
 
 export { HeadwearBaseballCap } from "./headwear-baseball-cap";

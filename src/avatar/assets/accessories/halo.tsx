@@ -1,8 +1,8 @@
 import type { AccessoryAssetProps } from './types';
-import { BOTFORGE_FEATURE_ANCHORS } from '../shared/feature-anchors';
+import { AVATAR_DESIGN } from "../../design-system";
 
 export function Halo({ color }: AccessoryAssetProps) {
-  const p = BOTFORGE_FEATURE_ANCHORS.halo;
+  const p = AVATAR_DESIGN.featureAnchors.halo;
   return (
     <ellipse
       aria-hidden="true"

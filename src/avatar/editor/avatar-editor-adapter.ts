@@ -3,6 +3,7 @@ import { createElement } from "react";
 import { BotAvatar } from "../bot-avatar";
 import type { AvatarAssetRegistry } from "../asset-registry";
 import type { AvatarConfig } from "../types";
+import { AVATAR_DESIGN } from "../design-system";
 
 import { faceAssetRegistry } from "../assets/faces/registry";
 import { hairAssets } from "../assets/hair/registry";
@@ -27,9 +28,24 @@ export const avatarEditorRegistries = {
 } as const;
 
 const glassesAnchors = {
-  leftEye: { cx: 166, cy: 281, width: 32, height: 86 },
-  rightEye: { cx: 278, cy: 281, width: 32, height: 86 },
-  faceBounds: { left: 30, top: 104, right: 406, bottom: 480 },
+  leftEye: {
+    cx: AVATAR_DESIGN.eyes.left.x,
+    cy: AVATAR_DESIGN.eyes.left.y,
+    width: AVATAR_DESIGN.eyes.width,
+    height: AVATAR_DESIGN.eyes.height,
+  },
+  rightEye: {
+    cx: AVATAR_DESIGN.eyes.right.x,
+    cy: AVATAR_DESIGN.eyes.right.y,
+    width: AVATAR_DESIGN.eyes.width,
+    height: AVATAR_DESIGN.eyes.height,
+  },
+  faceBounds: {
+    left: AVATAR_DESIGN.face.x,
+    top: AVATAR_DESIGN.face.y,
+    right: AVATAR_DESIGN.face.x + AVATAR_DESIGN.face.width,
+    bottom: AVATAR_DESIGN.face.y + AVATAR_DESIGN.face.height,
+  },
 } as const;
 
 export const avatarEditorAssetRegistry: AvatarAssetRegistry = {

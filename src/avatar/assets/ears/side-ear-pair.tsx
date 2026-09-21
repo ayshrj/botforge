@@ -1,5 +1,5 @@
 import type { EarAssetProps } from './types';
-import { BOTFORGE_FEATURE_ANCHORS } from '../shared/feature-anchors';
+import { AVATAR_DESIGN } from "../../design-system";
 
 interface SideEarPairProps extends EarAssetProps {
   outerPath: string;
@@ -12,7 +12,7 @@ export function SideEarPair({
   outerPath,
   innerPath,
 }: SideEarPairProps) {
-  const { left, right } = BOTFORGE_FEATURE_ANCHORS.ears;
+  const { left, right } = AVATAR_DESIGN.featureAnchors.ears;
 
   const renderEar = (transform: string) => (
     <g transform={transform}>

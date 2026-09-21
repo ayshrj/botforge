@@ -1,7 +1,7 @@
 import type { AccessoryAssetProps } from './types';
-import { BOTFORGE_FEATURE_ANCHORS } from '../shared/feature-anchors';
+import { AVATAR_DESIGN } from "../../design-system";
 
 export function EarringStudRight({ color }: AccessoryAssetProps) {
-  const p = BOTFORGE_FEATURE_ANCHORS.earrings.right;
+  const p = AVATAR_DESIGN.featureAnchors.earrings.right;
   return <circle aria-hidden="true" cx={p.x} cy={p.y} r={7} fill={color} />;
 }

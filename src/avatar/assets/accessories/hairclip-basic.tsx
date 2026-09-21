@@ -1,8 +1,8 @@
 import type { AccessoryAssetProps } from './types';
-import { BOTFORGE_FEATURE_ANCHORS } from '../shared/feature-anchors';
+import { AVATAR_DESIGN } from "../../design-system";
 
 export function HairclipBasic({ color, secondaryColor }: AccessoryAssetProps) {
-  const p = BOTFORGE_FEATURE_ANCHORS.hairAccessory.left;
+  const p = AVATAR_DESIGN.featureAnchors.hairAccessory.left;
   return (
     <g aria-hidden="true" transform={`translate(${p.x} ${p.y}) rotate(-26)`}>
       <rect x={-29} y={-8} width={58} height={16} rx={8} fill={color} />

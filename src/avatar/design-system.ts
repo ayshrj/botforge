@@ -114,6 +114,44 @@ export const AVATAR_DESIGN = {
     },
   },
 
+  featureAnchors: {
+    ears: {
+      left: { x: 92, y: 292 },
+      right: { x: 398, y: 292 },
+    },
+    earrings: {
+      left: { x: 67, y: 318 },
+      right: { x: 423, y: 318 },
+    },
+    headTop: {
+      left: { x: 176, y: 144 },
+      center: { x: 250, y: 110 },
+      right: { x: 324, y: 144 },
+    },
+    hairAccessory: {
+      left: { x: 150, y: 168 },
+      right: { x: 342, y: 164 },
+    },
+    earpiece: {
+      left: { x: 76, y: 286 },
+      right: { x: 414, y: 286 },
+    },
+    antenna: { x: 302, y: 114 },
+    halo: { x: 250, y: 68 },
+  },
+
+  headwearGeometry: {
+    canvasSize: 512,
+    upperHairLeft: 72,
+    upperHairRight: 414,
+    upperHairTop: 54,
+    foreheadTop: 154,
+    foreheadBottom: 200,
+    eyeSafeTop: 218,
+    peripheralLeftMax: 116,
+    peripheralRightMin: 364,
+  },
+
   bounds: {
     hair: {
       x: 20,
@@ -201,6 +239,32 @@ export const AVATAR_DESIGN = {
       readonly leftEar: AvatarPoint;
       readonly rightEar: AvatarPoint;
     };
+  };
+
+  readonly featureAnchors: {
+    readonly ears: { readonly left: AvatarPoint; readonly right: AvatarPoint };
+    readonly earrings: { readonly left: AvatarPoint; readonly right: AvatarPoint };
+    readonly headTop: {
+      readonly left: AvatarPoint;
+      readonly center: AvatarPoint;
+      readonly right: AvatarPoint;
+    };
+    readonly hairAccessory: { readonly left: AvatarPoint; readonly right: AvatarPoint };
+    readonly earpiece: { readonly left: AvatarPoint; readonly right: AvatarPoint };
+    readonly antenna: AvatarPoint;
+    readonly halo: AvatarPoint;
+  };
+
+  readonly headwearGeometry: {
+    readonly canvasSize: number;
+    readonly upperHairLeft: number;
+    readonly upperHairRight: number;
+    readonly upperHairTop: number;
+    readonly foreheadTop: number;
+    readonly foreheadBottom: number;
+    readonly eyeSafeTop: number;
+    readonly peripheralLeftMax: number;
+    readonly peripheralRightMin: number;
   };
 
   readonly bounds: {

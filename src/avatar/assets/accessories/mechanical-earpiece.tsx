@@ -1,8 +1,8 @@
 import type { AccessoryAssetProps } from './types';
-import { BOTFORGE_FEATURE_ANCHORS } from '../shared/feature-anchors';
+import { AVATAR_DESIGN } from "../../design-system";
 
 export function MechanicalEarpiece({ color, secondaryColor }: AccessoryAssetProps) {
-  const p = BOTFORGE_FEATURE_ANCHORS.earpiece.right;
+  const p = AVATAR_DESIGN.featureAnchors.earpiece.right;
   return (
     <g aria-hidden="true" transform={`translate(${p.x} ${p.y})`}>
       <rect x={-8} y={-35} width={24} height={70} rx={12} fill={color} />

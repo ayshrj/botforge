@@ -191,11 +191,7 @@ function EditorPanel({
             label="Face shape"
             options={faceOptions}
             value={config.faceShape}
-            onChange={(value) => {
-              if (value !== null) {
-                updateConfig("faceShape", value);
-              }
-            }}
+            onChange={(value) => updateConfig("faceShape", value)}
           />
         </PanelSection>
       );
@@ -226,11 +222,7 @@ function EditorPanel({
             label="Hairstyle"
             options={hairOptions}
             value={config.hairStyle}
-            onChange={(value) => {
-              if (value !== null) {
-                updateConfig("hairStyle", value);
-              }
-            }}
+            onChange={(value) => updateConfig("hairStyle", value)}
           />
         </PanelSection>
       );
@@ -261,10 +253,8 @@ function EditorPanel({
             label="Glasses"
             options={glassesOptions}
             value={config.glasses}
-            onChange={(value) =>
-              updateConfig("glasses", value as AvatarConfig["glasses"])
-            }
-            allowNone
+            onChange={(value) => updateConfig("glasses", value)}
+            noneValue={"glasses-none" as AvatarConfig["glasses"]}
           />
         </PanelSection>
       );
@@ -279,10 +269,8 @@ function EditorPanel({
             label="Facial hair"
             options={facialHairOptions}
             value={config.facialHair}
-            onChange={(value) =>
-              updateConfig("facialHair", value as AvatarConfig["facialHair"])
-            }
-            allowNone
+            onChange={(value) => updateConfig("facialHair", value)}
+            noneValue={"facial-hair-none" as AvatarConfig["facialHair"]}
           />
         </PanelSection>
       );
@@ -297,10 +285,8 @@ function EditorPanel({
             label="Headwear"
             options={headwearOptions}
             value={config.headwear}
-            onChange={(value) =>
-              updateConfig("headwear", value as AvatarConfig["headwear"])
-            }
-            allowNone
+            onChange={(value) => updateConfig("headwear", value)}
+            noneValue={"headwear-none" as AvatarConfig["headwear"]}
           />
         </PanelSection>
       );
@@ -315,11 +301,7 @@ function EditorPanel({
             label="Ears"
             options={earOptions}
             value={config.ears}
-            onChange={(value) => {
-              if (value !== null) {
-                updateConfig("ears", value);
-              }
-            }}
+            onChange={(value) => updateConfig("ears", value)}
           />
         </PanelSection>
       );
@@ -334,10 +316,8 @@ function EditorPanel({
             label="Accessory"
             options={accessoryOptions}
             value={config.accessory}
-            onChange={(value) =>
-              updateConfig("accessory", value as AvatarConfig["accessory"])
-            }
-            allowNone
+            onChange={(value) => updateConfig("accessory", value)}
+            noneValue={"accessory-none" as AvatarConfig["accessory"]}
           />
         </PanelSection>
       );

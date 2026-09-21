@@ -2,6 +2,7 @@ import {
   avatarEditorRegistries,
   type AvatarConfig,
 } from "./avatar-editor-adapter";
+import { DEFAULT_AVATAR_CONFIG } from "../types";
 
 export type EditorCategoryId =
   | "face"
@@ -100,19 +101,6 @@ export function humanizeAssetId(id: string): string {
     .join(" ");
 }
 
-function preferredRegistryId<T extends string>(
-  registry: Registry,
-  preferredId: string,
-): T {
-  const ids = Object.keys(registry);
-
-  if (ids.length === 0) {
-    throw new Error("BotForge registry must contain at least one asset.");
-  }
-
-  return (ids.includes(preferredId) ? preferredId : ids[0]) as T;
-}
-
 export const faceOptions = getRegistryIds<
   Extract<AvatarConfig["faceShape"], string>
 >(avatarEditorRegistries.face);
@@ -142,30 +130,5 @@ export const accessoryOptions = getRegistryIds<
 >(avatarEditorRegistries.accessory);
 
 export function createDefaultAvatarConfig(): AvatarConfig {
-  return {
-    faceShape: preferredRegistryId<AvatarConfig["faceShape"]>(
-      avatarEditorRegistries.face,
-      "face-round",
-    ),
-    skinColor: "#D99B73",
-
-    hairStyle: preferredRegistryId<AvatarConfig["hairStyle"]>(
-      avatarEditorRegistries.hair,
-      "hair-short-basic",
-    ),
-    hairColor: "#29292E",
-
-    glasses: "glasses-none" as AvatarConfig["glasses"],
-    facialHair: "facial-hair-none" as AvatarConfig["facialHair"],
-    headwear: "headwear-none" as AvatarConfig["headwear"],
-
-    ears: preferredRegistryId<AvatarConfig["ears"]>(
-      avatarEditorRegistries.ears,
-      "ears-standard",
-    ),
-
-    accessory: "accessory-none" as AvatarConfig["accessory"],
-
-    blushColor: "#D98787",
-  };
+  return { ...DEFAULT_AVATAR_CONFIG };
 }

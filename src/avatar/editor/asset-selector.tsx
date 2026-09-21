@@ -3,9 +3,9 @@ import { humanizeAssetId } from "./editor-options";
 interface AssetSelectorProps<T extends string> {
   label: string;
   options: readonly T[];
-  value: T | null;
-  onChange: (value: T | null) => void;
-  allowNone?: boolean;
+  value: T;
+  onChange: (value: T) => void;
+  noneValue?: T;
   noneLabel?: string;
 }
 
@@ -14,7 +14,7 @@ export function AssetSelector<T extends string>({
   options,
   value,
   onChange,
-  allowNone = false,
+  noneValue,
   noneLabel = "None",
 }: AssetSelectorProps<T>) {
   return (
@@ -23,11 +23,11 @@ export function AssetSelector<T extends string>({
 
       <div className="max-h-[22rem] overflow-y-auto pr-1">
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-          {allowNone && (
+          {noneValue !== undefined && (
             <AssetButton
               label={noneLabel}
-              selected={value === null}
-              onClick={() => onChange(null)}
+              selected={value === noneValue}
+              onClick={() => onChange(noneValue)}
             />
           )}
 

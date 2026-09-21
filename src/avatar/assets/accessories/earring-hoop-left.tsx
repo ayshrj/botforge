@@ -1,8 +1,8 @@
 import type { AccessoryAssetProps } from './types';
-import { BOTFORGE_FEATURE_ANCHORS } from '../shared/feature-anchors';
+import { AVATAR_DESIGN } from "../../design-system";
 
 export function EarringHoopLeft({ color }: AccessoryAssetProps) {
-  const p = BOTFORGE_FEATURE_ANCHORS.earrings.left;
+  const p = AVATAR_DESIGN.featureAnchors.earrings.left;
   return (
     <ellipse
       aria-hidden="true"

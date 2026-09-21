@@ -25,17 +25,17 @@ export interface AvatarConfig {
 }
 
 export const DEFAULT_AVATAR_CONFIG: Readonly<AvatarConfig> = {
-  faceShape: "face-rounded",
-  skinColor: "#F2B38F",
+  faceShape: "face-round",
+  skinColor: "#D99B73",
 
-  hairStyle: "hair-none",
-  hairColor: "#302A28",
+  hairStyle: "hair-short-basic",
+  hairColor: "#29292E",
 
   glasses: "glasses-none",
   facialHair: "facial-hair-none",
   headwear: "headwear-none",
-  ears: "ears-none",
+  ears: "ears-standard",
   accessory: "accessory-none",
 
-  blushColor: "#E78F88",
+  blushColor: "#D98787",
 };
