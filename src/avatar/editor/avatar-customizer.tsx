@@ -61,7 +61,7 @@ export function AvatarCustomizer({
   };
 
   const resetAvatar = () => {
-    const next = initialConfig ?? createDefaultAvatarConfig();
+    const next = createDefaultAvatarConfig();
 
     setConfig(next);
     onConfigChange?.(next);
@@ -223,6 +223,7 @@ function EditorPanel({
             options={hairOptions}
             value={config.hairStyle}
             onChange={(value) => updateConfig("hairStyle", value)}
+            noneValue="hair-none"
           />
         </PanelSection>
       );

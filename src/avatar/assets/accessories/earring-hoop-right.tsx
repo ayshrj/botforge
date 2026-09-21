@@ -2,7 +2,7 @@ import type { AccessoryAssetProps } from './types';
 import { AVATAR_DESIGN } from "../../design-system";
 
 export function EarringHoopRight({ color }: AccessoryAssetProps) {
-  const p = AVATAR_DESIGN.featureAnchors.earrings.right;
+  const p = AVATAR_DESIGN.anchors.feature.earrings.right;
   return (
     <ellipse
       aria-hidden="true"

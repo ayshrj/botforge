@@ -12,7 +12,7 @@ export function SideEarPair({
   outerPath,
   innerPath,
 }: SideEarPairProps) {
-  const { left, right } = AVATAR_DESIGN.featureAnchors.ears;
+  const { left, right } = AVATAR_DESIGN.anchors.feature.ears;
 
   const renderEar = (transform: string) => (
     <g transform={transform}>

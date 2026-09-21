@@ -2,7 +2,7 @@ import type { AccessoryAssetProps } from './types';
 import { AVATAR_DESIGN } from "../../design-system";
 
 export function Halo({ color }: AccessoryAssetProps) {
-  const p = AVATAR_DESIGN.featureAnchors.halo;
+  const p = AVATAR_DESIGN.anchors.feature.halo;
   return (
     <ellipse
       aria-hidden="true"
