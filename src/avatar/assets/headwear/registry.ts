@@ -7,7 +7,11 @@ import { HeadwearHood } from "./headwear-hood";
 import { HeadwearCrown } from "./headwear-crown";
 import { HeadwearHeadphones } from "./headwear-headphones";
 
-import type { HeadwearAsset, HeadwearId } from "./types";
+import type {
+  HeadwearAsset,
+  HeadwearId,
+  HeadwearSelectionId,
+} from "./types";
 
 export const HEADWEAR_REGISTRY = {
   "headwear-baseball-cap": {
@@ -68,7 +72,7 @@ export const HEADWEAR_REGISTRY = {
 } satisfies Record<HeadwearId, HeadwearAsset>;
 
 export function getHeadwearAsset(
-  id: HeadwearId | null | undefined,
+  id: HeadwearSelectionId,
 ): HeadwearAsset | null {
-  return id ? HEADWEAR_REGISTRY[id] : null;
+  return id === "headwear-none" ? null : HEADWEAR_REGISTRY[id];
 }

@@ -1,25 +1,25 @@
 import type {
-  AccessoryId,
-  EarsId,
+  AccessorySelectionId,
+  EarAssetId,
   FaceShapeId,
-  FacialHairId,
-  GlassesId,
-  HairStyleId,
-  HeadwearId,
+  FacialHairSelectionId,
+  GlassesSelectionId,
+  HairStyleSelectionId,
+  HeadwearSelectionId,
 } from "./asset-ids";
 
 export interface AvatarConfig {
   faceShape: FaceShapeId;
   skinColor: string;
 
-  hairStyle: HairStyleId;
+  hairStyle: HairStyleSelectionId;
   hairColor: string;
 
-  glasses: GlassesId;
-  facialHair: FacialHairId;
-  headwear: HeadwearId;
-  ears: EarsId;
-  accessory: AccessoryId;
+  glasses: GlassesSelectionId;
+  facialHair: FacialHairSelectionId;
+  headwear: HeadwearSelectionId;
+  ears: EarAssetId;
+  accessory: AccessorySelectionId;
 
   blushColor: string;
 }

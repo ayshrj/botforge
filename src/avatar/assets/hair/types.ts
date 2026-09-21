@@ -8,7 +8,19 @@ import type { ComponentType } from "react";
  * - hair-medium-curly
  * - hair-long-straight
  */
-export type HairStyleId = `hair-${string}`;
+export const HAIR_STYLE_IDS = [
+  "hair-short-basic", "hair-short-side-part", "hair-short-messy", "hair-buzz",
+  "hair-undercut", "hair-slicked-back", "hair-pompadour", "hair-spiky-soft",
+  "hair-medium-straight", "hair-medium-center-part", "hair-medium-side-part",
+  "hair-medium-wavy", "hair-medium-curly", "hair-curtain", "hair-blunt-bangs",
+  "hair-long-straight", "hair-long-side-part", "hair-long-wavy", "hair-long-curly",
+  "hair-high-ponytail", "hair-low-ponytail", "hair-bun", "hair-top-knot",
+  "hair-afro", "hair-twin-buns", "hair-braided-ponytail", "hair-thick-locks",
+  "hair-mohawk-soft",
+] as const;
+
+export type HairStyleId = (typeof HAIR_STYLE_IDS)[number];
+export type HairStyleSelectionId = HairStyleId | "hair-none";
 
 /**
  * Props shared by every hairstyle layer.

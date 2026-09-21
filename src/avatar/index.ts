@@ -1,21 +1,25 @@
 export {
-  ACCESSORY_IDS,
-  EARS_IDS,
+  ACCESSORY_ASSET_IDS,
+  EAR_ASSET_IDS,
   FACE_SHAPE_IDS,
-  FACIAL_HAIR_IDS,
   GLASSES_IDS,
   HAIR_STYLE_IDS,
   HEADWEAR_IDS,
 } from "./asset-ids";
 
 export type {
-  AccessoryId,
-  EarsId,
+  AccessoryAssetId,
+  AccessorySelectionId,
+  EarAssetId,
   FaceShapeId,
   FacialHairId,
+  FacialHairSelectionId,
   GlassesId,
+  GlassesSelectionId,
   HairStyleId,
+  HairStyleSelectionId,
   HeadwearId,
+  HeadwearSelectionId,
 } from "./asset-ids";
 
 export { EMPTY_AVATAR_ASSET_REGISTRY } from "./asset-registry";

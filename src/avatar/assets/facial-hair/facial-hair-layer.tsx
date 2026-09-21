@@ -1,13 +1,13 @@
-import type { FacialHairId } from "./types";
+import type { FacialHairSelectionId } from "./types";
 import { FACIAL_HAIR_REGISTRY } from "./registry";
 
 export interface FacialHairLayerProps {
-  facialHair: FacialHairId | null;
+  facialHair: FacialHairSelectionId;
   color: string;
 }
 
 export function FacialHairLayer({ facialHair, color }: FacialHairLayerProps) {
-  if (!facialHair) {
+  if (facialHair === "facial-hair-none") {
     return null;
   }
 

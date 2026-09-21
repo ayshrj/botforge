@@ -29,10 +29,10 @@ import {
   hairUndercut,
 } from "./assets";
 
-import type { HairAsset, HairStyleId } from "./types";
+import type { HairAsset, HairStyleId, HairStyleSelectionId } from "./types";
 
 export interface HairAssetRegistry {
-  get(id: HairStyleId | null | undefined): HairAsset | undefined;
+  get(id: HairStyleSelectionId): HairAsset | undefined;
   has(id: HairStyleId): boolean;
   getAll(): readonly HairAsset[];
 }
@@ -58,7 +58,7 @@ export function createHairAssetRegistry(
 
   return {
     get(id) {
-      if (!id) {
+      if (id === "hair-none") {
         return undefined;
       }
 

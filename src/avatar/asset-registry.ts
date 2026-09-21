@@ -1,12 +1,17 @@
 import type { ComponentType } from "react";
 
 import type {
-  AccessoryId,
-  EarsId,
+  AccessoryAssetId,
+  AccessorySelectionId,
+  EarAssetId,
   FacialHairId,
+  FacialHairSelectionId,
   GlassesId,
+  GlassesSelectionId,
   HairStyleId,
+  HairStyleSelectionId,
   HeadwearId,
+  HeadwearSelectionId,
 } from "./asset-ids";
 import type { AvatarHeadLayerId } from "./components/avatar-layer";
 import type { AvatarConfig } from "./types";
@@ -27,27 +32,31 @@ export interface AvatarAssetDefinition<Id extends string = string> {
 
 export interface AvatarAssetRegistry {
   readonly hairStyle: Readonly<
-    Partial<Record<HairStyleId, AvatarAssetDefinition<HairStyleId>>>
+    Partial<Record<HairStyleSelectionId, AvatarAssetDefinition<HairStyleId>>>
   >;
 
   readonly glasses: Readonly<
-    Partial<Record<GlassesId, AvatarAssetDefinition<GlassesId>>>
+    Partial<Record<GlassesSelectionId, AvatarAssetDefinition<GlassesId>>>
   >;
 
   readonly facialHair: Readonly<
-    Partial<Record<FacialHairId, AvatarAssetDefinition<FacialHairId>>>
+    Partial<
+      Record<FacialHairSelectionId, AvatarAssetDefinition<FacialHairId>>
+    >
   >;
 
   readonly headwear: Readonly<
-    Partial<Record<HeadwearId, AvatarAssetDefinition<HeadwearId>>>
+    Partial<Record<HeadwearSelectionId, AvatarAssetDefinition<HeadwearId>>>
   >;
 
   readonly ears: Readonly<
-    Partial<Record<EarsId, AvatarAssetDefinition<EarsId>>>
+    Partial<Record<EarAssetId, AvatarAssetDefinition<EarAssetId>>>
   >;
 
   readonly accessory: Readonly<
-    Partial<Record<AccessoryId, AvatarAssetDefinition<AccessoryId>>>
+    Partial<
+      Record<AccessorySelectionId, AvatarAssetDefinition<AccessoryAssetId>>
+    >
   >;
 }
 

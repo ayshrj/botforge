@@ -25,24 +25,6 @@ export interface FaceLayerProps {
 }
 
 export function FaceLayer({ faceShape, skinColor }: FaceLayerProps) {
-  if (faceShape === "face-rounded") {
-    const face = AVATAR_DESIGN.face;
-
-    return (
-      <AvatarLayer layer="face">
-        <rect
-          x={face.x}
-          y={face.y}
-          width={face.width}
-          height={face.height}
-          rx={face.cornerRadius}
-          ry={face.cornerRadius}
-          fill={skinColor}
-        />
-      </AvatarLayer>
-    );
-  }
-
   const Face = getFaceAsset(faceShape).Component;
 
   return (

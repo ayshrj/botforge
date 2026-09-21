@@ -14,6 +14,7 @@ export const ACCESSORY_ASSET_IDS = [
 ] as const;
 
 export type AccessoryAssetId = (typeof ACCESSORY_ASSET_IDS)[number];
+export type AccessorySelectionId = AccessoryAssetId | "accessory-none";
 export type AccessoryRenderLayer = 'headwear' | 'foreground-accessories';
 
 export interface AccessoryAssetProps {

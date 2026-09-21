@@ -13,6 +13,7 @@ export const GLASSES_IDS = [
 ] as const;
 
 export type GlassesId = (typeof GLASSES_IDS)[number];
+export type GlassesSelectionId = GlassesId | "glasses-none";
 
 export interface GlassesEyeAnchor {
   cx: number;

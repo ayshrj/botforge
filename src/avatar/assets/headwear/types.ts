@@ -12,6 +12,7 @@ export const HEADWEAR_IDS = [
 ] as const;
 
 export type HeadwearId = (typeof HEADWEAR_IDS)[number];
+export type HeadwearSelectionId = HeadwearId | "headwear-none";
 
 export interface HeadwearProps {
   /**
