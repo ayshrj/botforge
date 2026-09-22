@@ -14,7 +14,7 @@ import {
   type AvatarConfig,
 } from "./avatar-editor-adapter";
 import { AssetSelector } from "./asset-selector";
-import { downloadPng, downloadSvg } from "./avatar-export";
+import { downloadPng } from "./avatar-export";
 import { loadAvatarConfig, saveAvatarConfig, serializeAvatarConfig } from "./avatar-storage";
 import { CategoryNav } from "./category-nav";
 import { ColorSwatchPicker } from "./color-swatch-picker";
@@ -35,6 +35,27 @@ import {
   skinColorOptions,
   type EditorCategoryId,
 } from "./editor-options";
+
+function svgToPngDataUrl(svg: string, width: number, height: number): Promise<string> {
+  return new Promise((resolve) => {
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const context = canvas.getContext("2d");
+    if (!context) {
+      resolve(svg);
+      return;
+    }
+    const img = new Image();
+    img.onload = () => {
+      context.drawImage(img, 0, 0, width, height);
+      const dataUrl = canvas.toDataURL("image/png");
+      resolve(dataUrl);
+    };
+    img.onerror = () => resolve(svg);
+    img.src = "data:image/svg+xml;base64," + btoa(svg);
+  });
+}
 
 interface AvatarCustomizerProps {
   initialConfig?: AvatarConfig;
@@ -176,13 +197,12 @@ export function AvatarCustomizer({
     }
   };
 
-  const exportAvatar = async (format: "svg" | number) => {
+  const exportAvatar = async (format: number) => {
     if (!avatarRef.current) return;
     setExportOpen(false);
     try {
-      if (format === "svg") downloadSvg(avatarRef.current);
-      else await downloadPng(avatarRef.current, format);
-      announce(format === "svg" ? "SVG downloaded" : `${format}px PNG downloaded`);
+      await downloadPng(avatarRef.current, format);
+      announce(`${format}px PNG downloaded`);
     } catch {
       announce("Export failed — try SVG instead");
     }
@@ -203,7 +223,6 @@ export function AvatarCustomizer({
             <ActionButton label="Export" icon="↓" onClick={() => setExportOpen((open) => !open)} />
             {exportOpen && (
               <div className="absolute right-0 z-30 mt-2 w-52 overflow-hidden rounded-2xl border border-[#ddd2c7] bg-white p-1.5 shadow-2xl">
-                <ExportButton label="Vector SVG" onClick={() => exportAvatar("svg")} />
                 {[512, 1024, 2048].map((size) => (
                   <ExportButton key={size} label={`PNG · ${size} × ${size}`} onClick={() => exportAvatar(size)} />
                 ))}
@@ -240,17 +259,29 @@ export function AvatarCustomizer({
 }
 
 function AvatarPreview({ config, avatarRef }: { config: AvatarConfig; avatarRef: React.RefObject<SVGSVGElement | null> }) {
+  const [pngDataUrl, setPngDataUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!avatarRef.current) return;
+    const svg = new XMLSerializer().serializeToString(avatarRef.current);
+    svgToPngDataUrl(svg, 512, 512).then((dataUrl) => setPngDataUrl(dataUrl));
+  }, [avatarRef]);
+
   return (
     <div className="lg:sticky lg:top-6">
       <div className="overflow-hidden rounded-[2rem] border border-white/70 bg-white/50 p-3 shadow-[0_30px_80px_rgba(71,50,91,0.16)] backdrop-blur sm:p-4">
         <div className="preview-shell relative aspect-square overflow-hidden rounded-[1.6rem]">
           <div className="absolute left-5 top-5 z-10 rounded-full bg-white/75 px-3 py-1.5 text-xs font-bold text-[#564665] shadow-sm backdrop-blur">Live preview</div>
-          <BotAvatar
-            ref={avatarRef}
-            config={config}
-            registry={avatarEditorAssetRegistry}
-            className="avatar-float block h-full w-full"
-          />
+          {pngDataUrl ? (
+            <img src={pngDataUrl} alt="Avatar preview" className="avatar-float block h-full w-full" />
+          ) : (
+            <BotAvatar
+              ref={avatarRef}
+              config={config}
+              registry={avatarEditorAssetRegistry}
+              className="avatar-float block h-full w-full"
+            />
+          )}
         </div>
       </div>
       <p className="mt-3 text-center text-xs font-medium text-[#81778a]">Every BotForge avatar stays deterministic and export-ready.</p>
