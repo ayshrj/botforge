@@ -1,3 +1,4 @@
+import type { FaceGeometry } from "../../design-system";
 import type { ComponentType } from "react";
 
 export const HEADWEAR_IDS = [
@@ -15,6 +16,7 @@ export type HeadwearId = (typeof HEADWEAR_IDS)[number];
 export type HeadwearSelectionId = HeadwearId | "headwear-none";
 
 export interface HeadwearProps {
+  anchors?: FaceGeometry["anchors"];
   /**
    * Main recolorable surface.
    *

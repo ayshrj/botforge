@@ -57,8 +57,15 @@ export function createGlassesLayout(
   const padX = options.padX ?? 20;
   const padY = options.padY ?? 15;
 
-  const left = createLensBox(anchors.leftEye, padX, padY);
-  const right = createLensBox(anchors.rightEye, padX, padY);
+  const gap = anchors.rightEye.cx - anchors.leftEye.cx;
+  const maxSize = gap - 12;
+  const fitEye = (eye: GlassesEyeAnchor) => ({
+    ...eye,
+    width: Math.min(eye.width, maxSize - padX * 2),
+    height: Math.min(eye.height, maxSize - padY * 2),
+  });
+  const left = createLensBox(fitEye(anchors.leftEye), padX, padY);
+  const right = createLensBox(fitEye(anchors.rightEye), padX, padY);
 
   return {
     left,

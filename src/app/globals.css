@@ -1,26 +1,141 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f3ede4;
+  --foreground: #30263d;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: Arial, Helvetica, sans-serif;
+  --font-sans: "Avenir Next", Avenir, "Segoe UI", sans-serif;
   --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  background-image:
+    radial-gradient(circle at 8% 8%, rgba(255, 255, 255, 0.9), transparent 28rem),
+    linear-gradient(135deg, #f8f3eb 0%, #eee7ef 48%, #f5e9df 100%);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button:not(:disabled) {
+  cursor: pointer;
+}
+
+.action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.55rem;
+  border: 1px solid rgba(126, 110, 137, 0.24);
+  border-radius: 999px;
+  padding: 0.55rem 0.9rem;
+  background: rgba(255, 255, 255, 0.68);
+  color: #50445c;
+  box-shadow: 0 5px 16px rgba(66, 47, 81, 0.06);
+  font-size: 0.8rem;
+  font-weight: 750;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.action-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: white;
+  box-shadow: 0 8px 22px rgba(66, 47, 81, 0.12);
+}
+
+.action-button:focus-visible {
+  outline: 3px solid rgba(124, 92, 255, 0.34);
+  outline-offset: 2px;
+}
+
+.action-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.38;
+}
+
+.action-button-featured {
+  border-color: #7655bd;
+  background: #7655bd;
+  color: white;
+}
+
+.action-button-featured:hover:not(:disabled) {
+  background: #6647a9;
+}
+
+.preview-shell {
+  background: linear-gradient(145deg, #c8b4e8 0%, #9d7dcc 46%, #7656ae 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
+}
+
+.avatar-float {
+  animation: avatar-arrive 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.avatar-head-group {
+  transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ambient-orb {
+  position: fixed;
+  pointer-events: none;
+  border-radius: 999px;
+  filter: blur(2px);
+  opacity: 0.55;
+}
+
+.ambient-orb-one {
+  right: -8rem;
+  top: -10rem;
+  width: 25rem;
+  height: 25rem;
+  background: rgba(188, 158, 230, 0.35);
+}
+
+.ambient-orb-two {
+  bottom: -9rem;
+  left: -8rem;
+  width: 22rem;
+  height: 22rem;
+  background: rgba(244, 189, 153, 0.32);
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes avatar-arrive {
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@media (max-width: 640px) {
+  .action-button {
+    min-height: 2.4rem;
+    padding-inline: 0.72rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

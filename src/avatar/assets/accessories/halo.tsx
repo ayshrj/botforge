@@ -1,8 +1,8 @@
 import type { AccessoryAssetProps } from './types';
-import { AVATAR_DESIGN } from "../../design-system";
+import { getFaceGeometry } from "../../design-system";
 
-export function Halo({ color }: AccessoryAssetProps) {
-  const p = AVATAR_DESIGN.anchors.feature.halo;
+export function Halo({ color, anchors = getFaceGeometry("face-round").anchors }: AccessoryAssetProps) {
+  const p = anchors.halo;
   return (
     <ellipse
       aria-hidden="true"

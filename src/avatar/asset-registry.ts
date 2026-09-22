@@ -1,3 +1,4 @@
+import type { FaceGeometry } from "./design-system";
 import type { ComponentType } from "react";
 
 import type {
@@ -17,6 +18,7 @@ import type { AvatarHeadLayerId } from "./components/avatar-layer";
 import type { AvatarConfig } from "./types";
 
 export interface AvatarAssetProps {
+  geometry: FaceGeometry;
   config: Readonly<AvatarConfig>;
 }
 
@@ -60,12 +62,7 @@ export interface AvatarAssetRegistry {
   >;
 }
 
-/**
- * The core renderer intentionally registers no optional assets.
- *
- * Future asset modules can construct a populated registry conforming
- * to AvatarAssetRegistry and pass it to <BotAvatar registry={...} />.
- */
+/** Empty override for isolated renderer tests or custom registry consumers. */
 export const EMPTY_AVATAR_ASSET_REGISTRY: AvatarAssetRegistry = {
   hairStyle: {},
   glasses: {},

@@ -11,14 +11,20 @@ export function CategoryNav({
   activeCategory,
   onChange,
 }: CategoryNavProps) {
+  const moveFocus = (currentIndex: number, direction: number) => {
+    const next = categories[(currentIndex + direction + categories.length) % categories.length];
+    onChange(next.id);
+    requestAnimationFrame(() => document.getElementById(`avatar-editor-tab-${next.id}`)?.focus());
+  };
+
   return (
     <div
-      className="overflow-x-auto border-b border-white/10"
+      className="scrollbar-none overflow-x-auto border-b border-[#e5ddd3] bg-white/40"
       role="tablist"
       aria-label="Avatar customization categories"
     >
-      <div className="flex min-w-max gap-1 p-2">
-        {categories.map((category) => {
+      <div className="flex min-w-max gap-1.5 p-2.5">
+        {categories.map((category, index) => {
           const selected = category.id === activeCategory;
 
           return (
@@ -31,18 +37,21 @@ export function CategoryNav({
               aria-controls={`avatar-editor-panel-${category.id}`}
               tabIndex={selected ? 0 : -1}
               onClick={() => onChange(category.id)}
+              onKeyDown={(event) => {
+                if (event.key === "ArrowRight") { event.preventDefault(); moveFocus(index, 1); }
+                if (event.key === "ArrowLeft") { event.preventDefault(); moveFocus(index, -1); }
+              }}
               className={[
-                "rounded-lg px-4 py-2.5 text-sm font-medium",
-                "transition-colors",
+                "rounded-2xl px-3 py-2 text-xs font-semibold transition-all sm:text-sm",
                 "focus-visible:outline-none focus-visible:ring-2",
                 "focus-visible:ring-white focus-visible:ring-offset-2",
-                "focus-visible:ring-offset-neutral-950",
+                "focus-visible:ring-[#7c5cff] focus-visible:ring-offset-[#f7f2e9]",
                 selected
-                  ? "bg-white text-neutral-950"
-                  : "text-neutral-300 hover:bg-white/10 hover:text-white",
+                  ? "bg-[#30263d] text-white shadow-md"
+                  : "text-[#746a7d] hover:bg-white hover:text-[#30263d]",
               ].join(" ")}
             >
-              {category.label}
+              <span className="mr-1.5" aria-hidden="true">{category.icon}</span>{category.label}
             </button>
           );
         })}

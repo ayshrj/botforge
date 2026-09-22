@@ -1,49 +1,37 @@
-import type { ReactElement, SVGProps } from "react";
+import { useId, type SVGProps } from "react";
 
-import {
-  EMPTY_AVATAR_ASSET_REGISTRY,
-  type AvatarAssetDefinition,
-  type AvatarAssetRegistry,
-} from "./asset-registry";
-import { AVATAR_DESIGN } from "./design-system";
+import type { AvatarAssetRegistry } from "./asset-registry";
+import { getPresentation } from "./compatibility";
+import { AVATAR_DESIGN, getFaceGeometry } from "./design-system";
+import { avatarAssetRegistry } from "./renderer-registry";
 import type { AvatarConfig } from "./types";
-
-import {
-  AVATAR_HEAD_LAYER_ORDER,
-  type AvatarHeadLayerId,
-} from "./components/avatar-layer";
-
+import { AVATAR_HEAD_LAYER_ORDER } from "./components/avatar-layer";
 import {
   BackgroundLayer,
   BlushLayer,
   EyesLayer,
   FaceLayer,
 } from "./components/core-layers";
-
 import { HeadRotationGroup } from "./components/head-rotation-group";
 import { RegisteredAssetLayer } from "./components/registered-asset-layer";
 
-export interface BotAvatarProps extends Omit<
-  SVGProps<SVGSVGElement>,
-  "children" | "viewBox"
-> {
+export interface BotAvatarProps
+  extends Omit<SVGProps<SVGSVGElement>, "children" | "viewBox"> {
   config: Readonly<AvatarConfig>;
-
-  /**
-   * Optional so the core renderer works before any modular
-   * assets have been created.
-   */
   registry?: AvatarAssetRegistry;
 }
 
 export function BotAvatar({
   config,
-  registry = EMPTY_AVATAR_ASSET_REGISTRY,
+  registry = avatarAssetRegistry,
   width = AVATAR_DESIGN.canvas.width,
   height = AVATAR_DESIGN.canvas.height,
   ...svgProps
 }: BotAvatarProps) {
-  const selectedAssets: readonly (AvatarAssetDefinition | undefined)[] = [
+  const id = useId().replace(/:/g, "");
+  const geometry = getFaceGeometry(config.faceShape);
+  const presentation = getPresentation(config);
+  const selectedAssets = [
     registry.hairStyle[config.hairStyle],
     registry.ears[config.ears],
     registry.facialHair[config.facialHair],
@@ -51,35 +39,6 @@ export function BotAvatar({
     registry.headwear[config.headwear],
     registry.accessory[config.accessory],
   ];
-
-  function renderHeadLayer(layer: AvatarHeadLayerId): ReactElement {
-    switch (layer) {
-      case "face":
-        return (
-          <FaceLayer
-            key={layer}
-            faceShape={config.faceShape}
-            skinColor={config.skinColor}
-          />
-        );
-
-      case "blush":
-        return <BlushLayer key={layer} blushColor={config.blushColor} />;
-
-      case "eyes":
-        return <EyesLayer key={layer} />;
-
-      default:
-        return (
-          <RegisteredAssetLayer
-            key={layer}
-            layer={layer}
-            config={config}
-            assets={selectedAssets}
-          />
-        );
-    }
-  }
 
   return (
     <svg
@@ -91,10 +50,71 @@ export function BotAvatar({
       shapeRendering="geometricPrecision"
       data-botforge-avatar
     >
-      <BackgroundLayer />
+      <defs>
+        <clipPath id={`${id}-face`} clipPathUnits="userSpaceOnUse">
+          <rect {...geometry.face} rx={geometry.face.width * 0.42} />
+        </clipPath>
+        <clipPath id={`${id}-hair`} clipPathUnits="userSpaceOnUse">
+          <rect
+            x="-100"
+            y={geometry.face.y + 64}
+            width="712"
+            height="600"
+          />
+        </clipPath>
+      </defs>
 
-      <HeadRotationGroup>
-        {AVATAR_HEAD_LAYER_ORDER.map(renderHeadLayer)}
+      <BackgroundLayer fill={config.background} />
+
+      <HeadRotationGroup pose={config.headPose}>
+        {AVATAR_HEAD_LAYER_ORDER.map((layer) => {
+          if (layer === "face") {
+            return (
+              <FaceLayer
+                key={layer}
+                geometry={geometry}
+                faceShape={config.faceShape}
+                skinColor={config.skinColor}
+              />
+            );
+          }
+
+          if (layer === "eyes") {
+            return <EyesLayer key={layer} geometry={geometry} />;
+          }
+
+          if (layer === "blush") {
+            return (
+              <BlushLayer
+                key={layer}
+                geometry={geometry}
+                blushColor={config.blushColor}
+              />
+            );
+          }
+
+          const clipId =
+            layer === "facial-hair"
+              ? `${id}-face`
+              : presentation.cropUpperHair &&
+                  (layer === "hair-front" || layer === "hair-back")
+                ? `${id}-hair`
+                : undefined;
+
+          return (
+            <g
+              key={layer}
+              clipPath={clipId ? `url(#${clipId})` : undefined}
+            >
+              <RegisteredAssetLayer
+                layer={layer}
+                config={config}
+                geometry={geometry}
+                assets={selectedAssets}
+              />
+            </g>
+          );
+        })}
       </HeadRotationGroup>
     </svg>
   );

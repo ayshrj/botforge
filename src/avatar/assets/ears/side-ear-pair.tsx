@@ -1,5 +1,5 @@
 import type { EarAssetProps } from './types';
-import { AVATAR_DESIGN } from "../../design-system";
+import { getFaceGeometry } from "../../design-system";
 
 interface SideEarPairProps extends EarAssetProps {
   outerPath: string;
@@ -8,11 +8,12 @@ interface SideEarPairProps extends EarAssetProps {
 
 export function SideEarPair({
   skinColor,
+  anchors = getFaceGeometry("face-round").anchors,
   innerColor,
   outerPath,
   innerPath,
 }: SideEarPairProps) {
-  const { left, right } = AVATAR_DESIGN.anchors.feature.ears;
+  const { left, right } = anchors.ears;
 
   const renderEar = (transform: string) => (
     <g transform={transform}>

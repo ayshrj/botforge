@@ -1,62 +1,14 @@
 import type { HeadwearProps } from "./types";
-
-export function HeadwearHeadphones({
-  primaryColor = "currentColor",
-  secondaryColor,
-  accentColor,
-}: HeadwearProps) {
-  const secondary = secondaryColor ?? primaryColor;
-  const accent = accentColor ?? secondary;
-
-  return (
-    <g
-      data-asset-id="headwear-headphones"
-      aria-hidden="true"
-      pointerEvents="none"
-    >
-      {/*
-       * Filled arch instead of a heavy stroked outline.
-       * The central portion remains far above the eyes.
-       */}
-      <path
-        fill={primaryColor}
-        fillRule="evenodd"
-        d="
-          M76 249
-          C77 129 148 64 244 64
-          C340 64 411 129 412 249
-          L387 249
-          C387 145 327 89 244 89
-          C161 89 101 145 101 249
-          Z
-        "
-      />
-
-      {/* Left cup */}
-      <rect
-        x="62"
-        y="230"
-        width="58"
-        height="126"
-        rx="28"
-        fill={primaryColor}
-      />
-      <rect x="76" y="247" width="31" height="92" rx="15.5" fill={secondary} />
-
-      {/* Right cup */}
-      <rect
-        x="369"
-        y="230"
-        width="58"
-        height="126"
-        rx="28"
-        fill={primaryColor}
-      />
-      <rect x="382" y="247" width="31" height="92" rx="15.5" fill={secondary} />
-
-      {/* Tiny flat exterior accents */}
-      <circle cx="91" cy="293" r="7" fill={accent} />
-      <circle cx="398" cy="293" r="7" fill={accent} />
-    </g>
-  );
+export function HeadwearHeadphones({ primaryColor = "currentColor", secondaryColor, accentColor, anchors }: HeadwearProps) {
+  if (!anchors) return null;
+  const { left, right } = anchors.ears;
+  return <g data-asset-id="headwear-headphones">
+    <path d={`M ${left.x} ${left.y} C ${left.x-12} ${anchors.headTop.center.y-65}, ${right.x+12} ${anchors.headTop.center.y-65}, ${right.x} ${right.y}`}
+      fill="none" stroke={primaryColor} strokeWidth="18" />
+    {[left, right].map((p,i) => <g key={i}>
+      <rect x={p.x-21} y={p.y-39} width="42" height="84" rx="20" fill={primaryColor} />
+      <rect x={p.x-12} y={p.y-28} width="24" height="62" rx="12" fill={secondaryColor} />
+      <circle cx={p.x} cy={p.y+2} r="5" fill={accentColor} />
+    </g>)}
+  </g>;
 }

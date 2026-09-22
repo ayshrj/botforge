@@ -1,8 +1,8 @@
 import type { AccessoryAssetProps } from './types';
-import { AVATAR_DESIGN } from "../../design-system";
+import { getFaceGeometry } from "../../design-system";
 
-export function AntennaBasic({ color, secondaryColor }: AccessoryAssetProps) {
-  const p = AVATAR_DESIGN.anchors.feature.antenna;
+export function AntennaBasic({ color, secondaryColor, anchors = getFaceGeometry("face-round").anchors }: AccessoryAssetProps) {
+  const p = anchors.antenna;
   return (
     <g aria-hidden="true" transform={`translate(${p.x} ${p.y})`}>
       <path d="M0 8C4 -20 2 -48 -10 -76" fill="none" stroke={color} strokeWidth={8} strokeLinecap="round" />

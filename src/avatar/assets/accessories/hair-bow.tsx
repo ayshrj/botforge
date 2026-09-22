@@ -1,8 +1,8 @@
 import type { AccessoryAssetProps } from './types';
-import { AVATAR_DESIGN } from "../../design-system";
+import { getFaceGeometry } from "../../design-system";
 
-export function HairBow({ color, secondaryColor }: AccessoryAssetProps) {
-  const p = AVATAR_DESIGN.anchors.feature.hairAccessory.right;
+export function HairBow({ color, secondaryColor, anchors = getFaceGeometry("face-round").anchors }: AccessoryAssetProps) {
+  const p = anchors.hairAccessory.right;
   return (
     <g aria-hidden="true" transform={`translate(${p.x} ${p.y}) rotate(14)`}>
       <path d="M-7 0C-26 -25 -50 -23 -55 -5C-59 12 -40 27 -9 12Z" fill={color} />

@@ -5,6 +5,7 @@ import {
 import { DEFAULT_AVATAR_CONFIG } from "../types";
 
 export type EditorCategoryId =
+  | "pose"
   | "face"
   | "skin"
   | "hair"
@@ -13,11 +14,13 @@ export type EditorCategoryId =
   | "facialHair"
   | "headwear"
   | "ears"
-  | "accessories";
+  | "accessories"
+  | "background";
 
 export interface EditorCategory {
   id: EditorCategoryId;
   label: string;
+  icon: string;
 }
 
 export interface ColorOption {
@@ -27,16 +30,44 @@ export interface ColorOption {
 }
 
 export const editorCategories: readonly EditorCategory[] = [
-  { id: "face", label: "Face" },
-  { id: "skin", label: "Skin" },
-  { id: "hair", label: "Hair" },
-  { id: "hairColor", label: "Hair Color" },
-  { id: "glasses", label: "Glasses" },
-  { id: "facialHair", label: "Facial Hair" },
-  { id: "headwear", label: "Headwear" },
-  { id: "ears", label: "Ears" },
-  { id: "accessories", label: "Accessories" },
+  { id: "pose", label: "Pose", icon: "↗" },
+  { id: "face", label: "Face", icon: "◯" },
+  { id: "skin", label: "Skin", icon: "●" },
+  { id: "hair", label: "Hair", icon: "⌁" },
+  { id: "hairColor", label: "Color", icon: "◐" },
+  { id: "glasses", label: "Glasses", icon: "∞" },
+  { id: "facialHair", label: "Beard", icon: "⌄" },
+  { id: "headwear", label: "Hats", icon: "⌃" },
+  { id: "ears", label: "Ears", icon: "◖" },
+  { id: "accessories", label: "Extras", icon: "✦" },
+  { id: "background", label: "Backdrop", icon: "▣" },
 ] as const;
+
+export const poseOptions = [
+  { id: "upright", label: "Upright" },
+  { id: "tilt-left-soft", label: "Lean left" },
+  { id: "tilt-right-soft", label: "Lean right" },
+  { id: "tilt-left-strong", label: "Bold left" },
+  { id: "tilt-right-strong", label: "Bold right" },
+] as const;
+
+export const backgroundColorOptions: readonly ColorOption[] = [
+  { id: "background-lilac", label: "Soft Lilac", value: "#E9DFF5" },
+  { id: "background-sunrise", label: "Sunrise", value: "#F7D9C4" },
+  { id: "background-mint", label: "Mint", value: "#CFEBDD" },
+  { id: "background-sky", label: "Sky", value: "#CFE4F7" },
+  { id: "background-butter", label: "Butter", value: "#F5E7B2" },
+  { id: "background-charcoal", label: "Charcoal", value: "#24212B" },
+];
+
+export const accentColorOptions: readonly ColorOption[] = [
+  { id: "accent-ink", label: "Ink", value: "#393044" },
+  { id: "accent-plum", label: "Plum", value: "#7961A8" },
+  { id: "accent-berry", label: "Berry", value: "#A64D79" },
+  { id: "accent-rust", label: "Rust", value: "#A75D3C" },
+  { id: "accent-gold", label: "Gold", value: "#D9A54D" },
+  { id: "accent-teal", label: "Teal", value: "#3E8377" },
+];
 
 export const skinColorOptions: readonly ColorOption[] = [
   { id: "skin-porcelain", label: "Porcelain", value: "#F6D6C5" },

@@ -1,8 +1,8 @@
 import type { AccessoryAssetProps } from './types';
-import { AVATAR_DESIGN } from "../../design-system";
+import { getFaceGeometry } from "../../design-system";
 
-export function EarringHoopLeft({ color }: AccessoryAssetProps) {
-  const p = AVATAR_DESIGN.anchors.feature.earrings.left;
+export function EarringHoopLeft({ color, anchors = getFaceGeometry("face-round").anchors }: AccessoryAssetProps) {
+  const p = anchors.earrings.left;
   return (
     <ellipse
       aria-hidden="true"

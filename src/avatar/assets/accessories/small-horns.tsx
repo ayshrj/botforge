@@ -1,8 +1,8 @@
 import type { AccessoryAssetProps } from './types';
-import { AVATAR_DESIGN } from "../../design-system";
+import { getFaceGeometry } from "../../design-system";
 
-export function SmallHorns({ color, secondaryColor }: AccessoryAssetProps) {
-  const { left, right } = AVATAR_DESIGN.anchors.feature.headTop;
+export function SmallHorns({ color, secondaryColor, anchors = getFaceGeometry("face-round").anchors }: AccessoryAssetProps) {
+  const { left, right } = anchors.headTop;
   const horn = 'M0 12C-10 3 -14 -9 -10 -22L6 -53C8 -34 19 -18 24 -7C28 3 17 13 0 12Z';
   const inset = 'M5 3C1 -2 0 -9 3 -16L10 -30C12 -21 17 -12 19 -6C21 -1 14 4 5 3Z';
 

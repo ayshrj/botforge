@@ -1,94 +1,28 @@
 import type { FaceShapeId } from "../asset-ids";
 import { getFaceAsset } from "../assets/faces/registry";
-import { AVATAR_DESIGN } from "../design-system";
+import { AVATAR_DESIGN, type FaceGeometry } from "../design-system";
 import { AvatarLayer } from "./avatar-layer";
 
-export interface BackgroundLayerProps {
-  fill?: string;
+export function BackgroundLayer({ fill = AVATAR_DESIGN.colors.background }: { fill?: string }) {
+  return <AvatarLayer layer="background"><rect width="512" height="512" fill={fill} /></AvatarLayer>;
 }
 
-export function BackgroundLayer({
-  fill = AVATAR_DESIGN.colors.background,
-}: BackgroundLayerProps) {
-  const { width, height } = AVATAR_DESIGN.canvas;
-
-  return (
-    <AvatarLayer layer="background">
-      <rect x={0} y={0} width={width} height={height} fill={fill} />
-    </AvatarLayer>
-  );
-}
-
-export interface FaceLayerProps {
-  faceShape: FaceShapeId;
-  skinColor: string;
-}
-
-export function FaceLayer({ faceShape, skinColor }: FaceLayerProps) {
+export function FaceLayer({ faceShape, skinColor, geometry }: { faceShape: FaceShapeId; skinColor: string; geometry: FaceGeometry }) {
   const Face = getFaceAsset(faceShape).Component;
-
-  return (
-    <AvatarLayer layer="face">
-      <Face skinColor={skinColor} />
-    </AvatarLayer>
-  );
+  return <AvatarLayer layer="face"><g transform={geometry.faceTransform}><Face skinColor={skinColor} /></g></AvatarLayer>;
 }
 
-export function EyesLayer() {
-  const { eyes } = AVATAR_DESIGN;
-
-  const halfWidth = eyes.width / 2;
-  const halfHeight = eyes.height / 2;
-
-  return (
-    <AvatarLayer layer="eyes">
-      <rect
-        x={eyes.left.x - halfWidth}
-        y={eyes.left.y - halfHeight}
-        width={eyes.width}
-        height={eyes.height}
-        rx={eyes.cornerRadius}
-        ry={eyes.cornerRadius}
-        fill={AVATAR_DESIGN.colors.eyes}
-      />
-
-      <rect
-        x={eyes.right.x - halfWidth}
-        y={eyes.right.y - halfHeight}
-        width={eyes.width}
-        height={eyes.height}
-        rx={eyes.cornerRadius}
-        ry={eyes.cornerRadius}
-        fill={AVATAR_DESIGN.colors.eyes}
-      />
-    </AvatarLayer>
-  );
+export function EyesLayer({ geometry }: { geometry: FaceGeometry }) {
+  return <AvatarLayer layer="eyes">
+    {[geometry.anchors.eyeLeft, geometry.anchors.eyeRight].map((p, i) =>
+      <rect key={i} x={p.x - geometry.eyeWidth / 2} y={p.y - geometry.eyeHeight / 2}
+        width={geometry.eyeWidth} height={geometry.eyeHeight} rx={geometry.eyeWidth / 2} fill={AVATAR_DESIGN.colors.eyes} />)}
+  </AvatarLayer>;
 }
 
-export interface BlushLayerProps {
-  blushColor: string;
-}
-
-export function BlushLayer({ blushColor }: BlushLayerProps) {
-  const { blush } = AVATAR_DESIGN;
-
-  return (
-    <AvatarLayer layer="blush">
-      <ellipse
-        cx={blush.left.x}
-        cy={blush.left.y}
-        rx={blush.radiusX}
-        ry={blush.radiusY}
-        fill={blushColor}
-      />
-
-      <ellipse
-        cx={blush.right.x}
-        cy={blush.right.y}
-        rx={blush.radiusX}
-        ry={blush.radiusY}
-        fill={blushColor}
-      />
-    </AvatarLayer>
-  );
+export function BlushLayer({ blushColor, geometry }: { blushColor: string; geometry: FaceGeometry }) {
+  return <AvatarLayer layer="blush">
+    {Object.values(geometry.anchors.cheeks).map((p, i) =>
+      <ellipse key={i} cx={p.x} cy={p.y} rx={22} ry={10} fill={blushColor} opacity=".4" />)}
+  </AvatarLayer>;
 }

@@ -19,7 +19,7 @@ export function ColorSwatchPicker({
     <fieldset>
       <legend className="sr-only">{label}</legend>
 
-      <div className="flex flex-wrap gap-3">
+      <div className="grid grid-cols-4 gap-3 sm:grid-cols-6">
         {colors.map((color) => {
           const selected = color.value.toLowerCase() === value.toLowerCase();
 
@@ -32,14 +32,14 @@ export function ColorSwatchPicker({
               title={color.label}
               onClick={() => onChange(color.value)}
               className={[
-                "relative h-12 w-12 shrink-0 rounded-full border-2",
-                "transition-transform hover:scale-105",
+                "relative aspect-square w-full rounded-2xl border-2",
+                "transition-all hover:-translate-y-0.5 hover:shadow-md",
                 "focus-visible:outline-none focus-visible:ring-2",
                 "focus-visible:ring-white focus-visible:ring-offset-2",
-                "focus-visible:ring-offset-neutral-950",
+                "focus-visible:ring-[#7c5cff] focus-visible:ring-offset-[#f7f2e9]",
                 selected
-                  ? "border-white ring-2 ring-white/40"
-                  : "border-white/20",
+                  ? "border-[#30263d] ring-2 ring-[#7c5cff]/30"
+                  : "border-white shadow-sm",
               ].join(" ")}
               style={{ backgroundColor: color.value }}
             >
@@ -57,15 +57,15 @@ export function ColorSwatchPicker({
       </div>
 
       {showCustomColorPicker && (
-        <div className="mt-6 flex items-center justify-between gap-4 rounded-xl border border-white/10 bg-white/[0.04] p-4">
+        <div className="mt-5 flex items-center justify-between gap-4 rounded-2xl border border-[#ded5ca] bg-white/70 p-4">
           <div>
-            <p className="text-sm font-medium text-white">Custom color</p>
-            <p className="mt-0.5 font-mono text-xs uppercase text-neutral-400">
+            <p className="text-sm font-semibold text-[#30263d]">Make it yours</p>
+            <p className="mt-0.5 font-mono text-xs uppercase text-[#81778a]">
               {value}
             </p>
           </div>
 
-          <label className="relative h-11 w-16 cursor-pointer overflow-hidden rounded-lg border border-white/20">
+          <label className="relative h-11 w-16 cursor-pointer overflow-hidden rounded-xl border-2 border-white shadow-md">
             <span className="sr-only">Choose custom {label.toLowerCase()}</span>
 
             <input

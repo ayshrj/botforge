@@ -8,8 +8,8 @@ export function GlassesSunglassesSquare({
   ...groupProps
 }: GlassesAssetProps) {
   const layout = createGlassesLayout(anchors, {
-    padX: 27,
-    padY: 17,
+    padX: 24,
+    padY: 12,
   });
 
   const leftSize = Math.max(layout.left.width, layout.left.height);

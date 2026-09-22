@@ -1,283 +1,97 @@
-export interface AvatarPoint {
-  readonly x: number;
-  readonly y: number;
-}
+import type { FaceShapeId } from "./assets/faces/types";
+import type { AvatarConfig, HeadPose } from "./types";
 
-export interface AvatarBounds {
-  readonly x: number;
-  readonly y: number;
-  readonly width: number;
-  readonly height: number;
-}
+export interface AvatarPoint { readonly x: number; readonly y: number }
+export interface AvatarBounds { readonly x: number; readonly y: number; readonly width: number; readonly height: number }
 
 export const AVATAR_DESIGN = {
-  canvas: {
-    width: 512,
-    height: 512,
-    viewBox: "0 0 512 512",
+  canvas: { width: 512, height: 512, viewBox: "0 0 512 512" },
+  head: { pivot: { x: 256, y: 280 }, poses: {
+    upright: 0, "tilt-left-soft": -8, "tilt-right-soft": 8,
+    "tilt-left-strong": -17, "tilt-right-strong": 17,
+  } satisfies Record<HeadPose, number> },
+  colors: { background: "#E9DFF5", eyes: "#24212B" },
+  eyes: { width: 25, height: 65, spacing: 98 },
+  // Authored art bounds, not competing placement anchors. All fitting happens below.
+  source: {
+    hair: { x: 245, y: 80, width: 300 },
+    headwear: { x: 244, y: 80, width: 310 },
+    beard: { x: 79, y: 298, width: 278, height: 209 },
   },
+  faces: {
+    "face-round": { source: { x: 30, y: 104, width: 376, height: 376 }, width: 280, height: 294, top: 145, eyeSpread: 1 },
+    "face-oval": { source: { x: 58, y: 96, width: 320, height: 392 }, width: 252, height: 310, top: 133, eyeSpread: .94 },
+    "face-wide": { source: { x: 22, y: 118, width: 392, height: 348 }, width: 308, height: 278, top: 155, eyeSpread: 1.12 },
+    "face-narrow": { source: { x: 84, y: 88, width: 268, height: 404 }, width: 225, height: 316, top: 128, eyeSpread: .88 },
+    "face-soft-square": { source: { x: 48, y: 108, width: 340, height: 372 }, width: 278, height: 290, top: 147, eyeSpread: 1.02 },
+  } satisfies Record<FaceShapeId, { source: AvatarBounds; width: number; height: number; top: number; eyeSpread: number }>,
+} as const;
 
-  head: {
-    rotationDegrees: 17,
-    pivot: {
-      x: 227,
-      y: 317,
-    },
-  },
+export function fitBounds(source: AvatarBounds, target: AvatarBounds): string {
+  return `translate(${target.x} ${target.y}) scale(${target.width / source.width} ${target.height / source.height}) translate(${-source.x} ${-source.y})`;
+}
 
-  face: {
-    x: 34,
-    y: 112,
-    width: 386,
-    height: 410,
-    cornerRadius: 160,
-  },
+export function getHeadTransform(pose: HeadPose): string {
+  const { pivot, poses } = AVATAR_DESIGN.head;
+  return `rotate(${poses[pose]} ${pivot.x} ${pivot.y})`;
+}
 
-  eyes: {
-    width: 32,
-    height: 86,
-    cornerRadius: 16,
-
-    left: {
-      x: 166,
-      y: 281,
-    },
-
-    right: {
-      x: 278,
-      y: 281,
-    },
-  },
-
-  blush: {
-    radiusX: 34,
-    radiusY: 13,
-
-    left: {
-      x: 123,
-      y: 376,
-    },
-
-    right: {
-      x: 329,
-      y: 376,
-    },
-  },
-
-  anchors: {
-    ears: {
-      left: {
-        x: 51,
-        y: 307,
-      },
-
-      right: {
-        x: 413,
-        y: 307,
-      },
-    },
-
+export function getFaceGeometry(faceShape: FaceShapeId) {
+  const spec = AVATAR_DESIGN.faces[faceShape];
+  const centerX = AVATAR_DESIGN.head.pivot.x;
+  const face = { x: centerX - spec.width / 2, y: spec.top, width: spec.width, height: spec.height };
+  const eyeY = spec.top + spec.height * .43;
+  const eyeSpacing = AVATAR_DESIGN.eyes.spacing * spec.eyeSpread;
+  const eyeWidth = AVATAR_DESIGN.eyes.width * Math.min(1, spec.eyeSpread);
+  const eyeHeight = AVATAR_DESIGN.eyes.height;
+  const ears = {
+    left: { x: face.x + 7, y: eyeY + 15 },
+    right: { x: face.x + face.width - 7, y: eyeY + 15 },
+  };
+  const anchors = {
+    faceCenter: { x: centerX, y: face.y + face.height / 2 },
+    chin: { x: centerX, y: face.y + face.height },
+    eyeLeft: { x: centerX - eyeSpacing / 2, y: eyeY },
+    eyeRight: { x: centerX + eyeSpacing / 2, y: eyeY },
+    ears,
+    earrings: { left: { x: ears.left.x - 10, y: ears.left.y + 28 }, right: { x: ears.right.x + 10, y: ears.right.y + 28 } },
+    headTop: { left: { x: centerX - spec.width * .28, y: face.y + 6 }, center: { x: centerX, y: face.y - 22 }, right: { x: centerX + spec.width * .28, y: face.y + 6 } },
+    hairAccessory: { left: { x: centerX - spec.width * .31, y: face.y + 40 }, right: { x: centerX + spec.width * .31, y: face.y + 36 } },
+    earpiece: ears,
+    antenna: { x: centerX + spec.width * .17, y: face.y - 15 },
+    halo: { x: centerX, y: face.y - 64 },
+    beardTop: { x: centerX, y: eyeY + eyeHeight / 2 + 18 },
+    cheeks: { left: { x: centerX - eyeSpacing * .85, y: eyeY + 57 }, right: { x: centerX + eyeSpacing * .85, y: eyeY + 57 } },
+  };
+  const hairSource = AVATAR_DESIGN.source.hair;
+  const headwearSource = AVATAR_DESIGN.source.headwear;
+  return {
+    face, anchors, eyeWidth, eyeHeight,
+    faceTransform: fitBounds(spec.source, face),
+    hairTransform: `translate(${centerX} ${face.y - 28}) scale(${spec.width / hairSource.width} .88) translate(${-hairSource.x} ${-hairSource.y})`,
+    headwearTransform: `translate(${centerX} ${face.y - 28}) scale(${spec.width / headwearSource.width} .88) translate(${-headwearSource.x} ${-headwearSource.y})`,
+    beardTransform: fitBounds(
+      AVATAR_DESIGN.source.beard,
+      { x: face.x + spec.width * .035, y: anchors.beardTop.y, width: spec.width * .93, height: anchors.chin.y - anchors.beardTop.y + 12 },
+    ),
     glasses: {
-      leftEye: {
-        x: 166,
-        y: 281,
-      },
-
-      bridge: {
-        x: 222,
-        y: 281,
-      },
-
-      rightEye: {
-        x: 278,
-        y: 281,
-      },
+      leftEye: { cx: anchors.eyeLeft.x, cy: eyeY, width: eyeWidth, height: eyeHeight },
+      rightEye: { cx: anchors.eyeRight.x, cy: eyeY, width: eyeWidth, height: eyeHeight },
+      faceBounds: { left: face.x, top: face.y, right: face.x + face.width, bottom: face.y + face.height },
     },
-
-    headwear: {
-      center: {
-        x: 222,
-        y: 145,
-      },
-    },
-
-    accessory: {
-      leftEar: {
-        x: 51,
-        y: 330,
-      },
-
-      rightEar: {
-        x: 413,
-        y: 330,
-      },
-    },
-
-    feature: {
-      ears: {
-        left: { x: 92, y: 292 },
-        right: { x: 398, y: 292 },
-      },
-      earrings: {
-        left: { x: 67, y: 318 },
-        right: { x: 423, y: 318 },
-      },
-      headTop: {
-        left: { x: 176, y: 144 },
-        center: { x: 250, y: 110 },
-        right: { x: 324, y: 144 },
-      },
-      hairAccessory: {
-        left: { x: 150, y: 168 },
-        right: { x: 342, y: 164 },
-      },
-      earpiece: {
-        left: { x: 76, y: 286 },
-        right: { x: 414, y: 286 },
-      },
-      antenna: { x: 302, y: 114 },
-      halo: { x: 250, y: 68 },
-    },
-  },
-
-  headwearGeometry: {
-    canvasSize: 512,
-    upperHairLeft: 72,
-    upperHairRight: 414,
-    upperHairTop: 54,
-    foreheadTop: 154,
-    foreheadBottom: 200,
-    eyeSafeTop: 218,
-    peripheralLeftMax: 116,
-    peripheralRightMin: 364,
-  },
-
-  bounds: {
-    hair: {
-      x: 20,
-      y: 62,
-      width: 430,
-      height: 275,
-    },
-
-    glasses: {
-      x: 112,
-      y: 223,
-      width: 220,
-      height: 120,
-    },
-
-    headwear: {
-      x: 38,
-      y: 36,
-      width: 380,
-      height: 190,
-    },
-  },
-
-  safeZones: {
-    upperRightNegativeSpace: {
-      x: 365,
-      y: 0,
-      width: 147,
-      height: 132,
-    },
-  },
-
-  colors: {
-    background: "#17181B",
-    eyes: "#111214",
-  },
-} as const satisfies {
-  readonly canvas: {
-    readonly width: number;
-    readonly height: number;
-    readonly viewBox: string;
   };
+}
+export type FaceGeometry = ReturnType<typeof getFaceGeometry>;
 
-  readonly head: {
-    readonly rotationDegrees: number;
-    readonly pivot: AvatarPoint;
-  };
-
-  readonly face: AvatarBounds & {
-    readonly cornerRadius: number;
-  };
-
-  readonly eyes: {
-    readonly width: number;
-    readonly height: number;
-    readonly cornerRadius: number;
-    readonly left: AvatarPoint;
-    readonly right: AvatarPoint;
-  };
-
-  readonly blush: {
-    readonly radiusX: number;
-    readonly radiusY: number;
-    readonly left: AvatarPoint;
-    readonly right: AvatarPoint;
-  };
-
-  readonly anchors: {
-    readonly ears: {
-      readonly left: AvatarPoint;
-      readonly right: AvatarPoint;
-    };
-
-    readonly glasses: {
-      readonly leftEye: AvatarPoint;
-      readonly bridge: AvatarPoint;
-      readonly rightEye: AvatarPoint;
-    };
-
-    readonly headwear: {
-      readonly center: AvatarPoint;
-    };
-
-    readonly accessory: {
-      readonly leftEar: AvatarPoint;
-      readonly rightEar: AvatarPoint;
-    };
-    readonly feature: {
-      readonly ears: { readonly left: AvatarPoint; readonly right: AvatarPoint };
-      readonly earrings: { readonly left: AvatarPoint; readonly right: AvatarPoint };
-      readonly headTop: {
-        readonly left: AvatarPoint;
-        readonly center: AvatarPoint;
-        readonly right: AvatarPoint;
-      };
-      readonly hairAccessory: { readonly left: AvatarPoint; readonly right: AvatarPoint };
-      readonly earpiece: { readonly left: AvatarPoint; readonly right: AvatarPoint };
-      readonly antenna: AvatarPoint;
-      readonly halo: AvatarPoint;
-    };
-  };
-
-  readonly headwearGeometry: {
-    readonly canvasSize: number;
-    readonly upperHairLeft: number;
-    readonly upperHairRight: number;
-    readonly upperHairTop: number;
-    readonly foreheadTop: number;
-    readonly foreheadBottom: number;
-    readonly eyeSafeTop: number;
-    readonly peripheralLeftMax: number;
-    readonly peripheralRightMin: number;
-  };
-
-  readonly bounds: {
-    readonly hair: AvatarBounds;
-    readonly glasses: AvatarBounds;
-    readonly headwear: AvatarBounds;
-  };
-
-  readonly safeZones: {
-    readonly upperRightNegativeSpace: AvatarBounds;
-  };
-
-  readonly colors: {
-    readonly background: string;
-    readonly eyes: string;
-  };
-};
+// Attach jewelry to the selected ear's actual lobe, including fantasy ears.
+export function getAccessoryAnchors(config: Readonly<AvatarConfig>, geometry: FaceGeometry) {
+  const anchors = geometry.anchors;
+  if (config.ears === "ears-cat" || config.ears === "ears-bunny") {
+    return { ...anchors, earrings: { left: anchors.headTop.left, right: anchors.headTop.right } };
+  }
+  const lobe = config.ears === "ears-large" ? 40 : config.ears === "ears-small" ? 23 : 28;
+  return { ...anchors, earrings: {
+    left: { x: anchors.ears.left.x - 10, y: anchors.ears.left.y + lobe },
+    right: { x: anchors.ears.right.x + 10, y: anchors.ears.right.y + lobe },
+  } };
+}

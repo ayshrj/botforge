@@ -1,3 +1,4 @@
+import type { FaceGeometry } from "../../design-system";
 import type { ComponentType } from 'react';
 
 export const ACCESSORY_ASSET_IDS = [
@@ -18,6 +19,7 @@ export type AccessorySelectionId = AccessoryAssetId | "accessory-none";
 export type AccessoryRenderLayer = 'headwear' | 'foreground-accessories';
 
 export interface AccessoryAssetProps {
+  anchors?: FaceGeometry["anchors"];
   color: string;
   secondaryColor?: string;
 }

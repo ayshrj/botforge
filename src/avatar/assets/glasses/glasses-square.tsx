@@ -9,7 +9,7 @@ export function GlassesSquare({
 }: GlassesAssetProps) {
   const layout = createGlassesLayout(anchors, {
     padX: 24,
-    padY: 17,
+    padY: 12,
   });
 
   const leftSize = Math.max(layout.left.width, layout.left.height);

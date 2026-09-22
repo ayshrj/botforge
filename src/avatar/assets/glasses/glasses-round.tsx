@@ -8,8 +8,8 @@ export function GlassesRound({
   ...groupProps
 }: GlassesAssetProps) {
   const layout = createGlassesLayout(anchors, {
-    padX: 23,
-    padY: 16,
+    padX: 24,
+    padY: 12,
   });
 
   const leftRadius = Math.max(layout.left.width, layout.left.height) / 2;

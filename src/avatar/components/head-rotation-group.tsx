@@ -1,21 +1,24 @@
 import type { PropsWithChildren, SVGProps } from "react";
-
-import { AVATAR_DESIGN } from "../design-system";
+import { getHeadTransform } from "../design-system";
+import type { HeadPose } from "../types";
 
 export type HeadRotationGroupProps = PropsWithChildren<
-  Omit<SVGProps<SVGGElement>, "children" | "transform">
+  Omit<SVGProps<SVGGElement>, "children" | "transform"> & { pose: HeadPose }
 >;
 
 export function HeadRotationGroup({
   children,
+  pose,
+  className,
   ...groupProps
 }: HeadRotationGroupProps) {
-  const { pivot, rotationDegrees } = AVATAR_DESIGN.head;
-
-  const transform = `rotate(${rotationDegrees} ${pivot.x} ${pivot.y})`;
-
   return (
-    <g {...groupProps} data-avatar-head-group transform={transform}>
+    <g
+      {...groupProps}
+      className={["avatar-head-group", className].filter(Boolean).join(" ")}
+      data-avatar-head-group
+      transform={getHeadTransform(pose)}
+    >
       {children}
     </g>
   );

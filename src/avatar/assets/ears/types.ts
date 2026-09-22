@@ -1,3 +1,4 @@
+import type { FaceGeometry } from "../../design-system";
 import type { ComponentType } from 'react';
 
 export const EAR_ASSET_IDS = [
@@ -12,6 +13,7 @@ export const EAR_ASSET_IDS = [
 export type EarAssetId = (typeof EAR_ASSET_IDS)[number];
 
 export interface EarAssetProps {
+  anchors?: FaceGeometry["anchors"];
   skinColor: string;
   innerColor?: string;
 }
