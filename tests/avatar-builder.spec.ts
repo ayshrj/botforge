@@ -12,7 +12,8 @@ test.beforeEach(async ({ page }) => {
 
 test("renders the canonical avatar and persists valid selections", async ({ page }) => {
   const avatar = page.locator("svg[data-botforge-avatar]").first();
-  await expect(avatar).toBeVisible();
+  await expect(page.getByRole("img", { name: "Avatar preview" })).toBeVisible();
+  await expect(avatar).toBeAttached();
   await expect(avatar.locator('[data-avatar-layer="eyes"] rect')).toHaveCount(2);
   await expect(avatar.locator('[data-avatar-head-group]')).toHaveAttribute("transform", "rotate(8 256 280)");
 
@@ -22,17 +23,23 @@ test("renders the canonical avatar and persists valid selections", async ({ page
 
   await expect.poll(async () => page.evaluate(() => JSON.parse(localStorage.getItem("botforge.avatar.v1") ?? "null")?.avatar?.headPose)).toBe("upright");
   await page.reload();
+  await expect(page.getByRole("img", { name: "Avatar preview" })).toBeVisible();
   await expect(page.locator("svg[data-botforge-avatar]").first().locator('[data-avatar-head-group]')).toHaveAttribute("transform", "rotate(0 256 280)");
 });
 
 test("face geometry refits features and history restores the prior state", async ({ page }) => {
   const avatar = page.locator("svg[data-botforge-avatar]").first();
+  const preview = page.getByRole("img", { name: "Avatar preview" });
+  const initialPreviewSource = await preview.getAttribute("src");
   const eyes = avatar.locator('[data-avatar-layer="eyes"] rect');
   const roundLeftX = Number(await eyes.first().getAttribute("x"));
 
   await page.getByRole("tab", { name: /face/i }).click();
   await page.getByRole("button", { name: "Narrow" }).click();
   await expect.poll(async () => Number(await eyes.first().getAttribute("x"))).not.toBe(roundLeftX);
+  await expect
+    .poll(async () => preview.getAttribute("src"))
+    .not.toBe(initialPreviewSource);
   const narrowLeftX = Number(await eyes.first().getAttribute("x"));
   expect(narrowLeftX).toBeGreaterThan(roundLeftX);
 
@@ -40,7 +47,7 @@ test("face geometry refits features and history restores the prior state", async
   await expect.poll(async () => Number(await eyes.first().getAttribute("x"))).toBe(roundLeftX);
 });
 
-test("randomize keeps a valid serialized config and SVG export downloads", async ({ page }) => {
+test("randomize keeps a valid serialized config and PNG export downloads", async ({ page }) => {
   await page.getByRole("button", { name: "Randomize" }).click();
   await expect.poll(async () => page.evaluate(() => Boolean(localStorage.getItem("botforge.avatar.v1")))).toBe(true);
   const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("botforge.avatar.v1") ?? "null"));
@@ -51,12 +58,6 @@ test("randomize keeps a valid serialized config and SVG export downloads", async
     hairStyle: expect.stringMatching(/^hair-/),
     glasses: expect.stringMatching(/^glasses-/),
   });
-
-  await page.getByRole("button", { name: "Export" }).click();
-  const downloadPromise = page.waitForEvent("download");
-  await page.getByRole("button", { name: "Vector SVG" }).click();
-  const download = await downloadPromise;
-  expect(download.suggestedFilename()).toMatch(/^botforge-avatar-\d{4}-\d{2}-\d{2}-avatar\.svg$/);
 
   await page.getByRole("button", { name: "Export" }).click();
   const pngDownloadPromise = page.waitForEvent("download");
@@ -95,7 +96,7 @@ test("every registered visual option renders without breaking the avatar", async
     for (let index = 0; index < optionCount; index += 1) {
       await optionButtons.nth(index).click();
       await expect(avatar.locator('[data-avatar-layer="eyes"] rect')).toHaveCount(2);
-      await expect(avatar.locator('[data-avatar-head-group]')).toBeVisible();
+      await expect(avatar.locator('[data-avatar-head-group]')).toBeAttached();
     }
   }
 });

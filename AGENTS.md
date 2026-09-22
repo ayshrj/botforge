@@ -14,7 +14,7 @@ These rules apply repository-wide. Treat MUST and MUST NOT as requirements.
 
 ## Product contract
 
-BotForge is a deterministic, vector-first modular avatar builder. `AvatarConfig` selects registered React/SVG assets, and `BotAvatar` composes them in a fixed layer order. SVG is the canonical artwork; PNG exports are rasterized from that same rendered SVG.
+BotForge is a deterministic, vector-first modular avatar builder. `AvatarConfig` selects registered React/SVG assets, and `BotAvatar` composes them in a fixed layer order. SVG is an internal canonical artwork source; the visible editor preview and downloads are rasterized PNGs.
 
 The runtime must remain local and deterministic. Do not add image generation, LLM calls, remote rendering, or a parallel Canvas/WebGL avatar renderer.
 
@@ -28,7 +28,7 @@ The application currently includes:
 - explicit `*-none` selections for optional asset families, including hair;
 - undo/redo, reset, randomize, and JSON configuration copy;
 - versioned browser-local persistence;
-- SVG and 512/1024/2048 PNG downloads;
+- PNG preview and 512/1024/2048 PNG downloads;
 - desktop and mobile Playwright coverage.
 
 Reset always means `DEFAULT_AVATAR_CONFIG`, even when the editor received `initialConfig`. `initialConfig` controls only the initial in-memory value and disables loading a saved browser value for that mount.
@@ -156,7 +156,7 @@ History is bounded and supports Ctrl/Cmd+Z and Ctrl/Cmd+Shift+Z. New editor acti
 
 Persistence is localStorage schema version 1 at `botforge.avatar.v1`. All restored data must pass `parseAvatarConfig()` before rendering. Invalid data falls back safely to the canonical default.
 
-SVG download serializes the live canonical SVG. PNG download rasterizes that serialization at the requested square size. Never hand-maintain a second export tree or geometry set.
+The visible preview is a PNG rasterization of the canonical SVG. The SVG used for rasterization may exist only in an offscreen editor container; do not add a visible SVG or SVG download action. PNG downloads rasterize that same source at the requested square size. Never hand-maintain a second export tree or geometry set.
 
 Editor animation must be optional decoration. Respect `prefers-reduced-motion`. Keep touch targets comfortable, tabs keyboard navigable, focus visible, selection semantic (`aria-selected`/`aria-pressed`), and toast feedback in a polite live region.
 
@@ -192,7 +192,7 @@ For renderer changes, additionally inspect difficult combinations across:
 - earrings, head-top accessories, and ear devices;
 - 32–128px output when small-size readability is relevant.
 
-Compare live preview and downloaded SVG/PNG after export-related changes.
+Compare the live PNG preview and downloaded PNG after export-related changes.
 
 ## Change discipline
 

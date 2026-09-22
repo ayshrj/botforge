@@ -1,5 +1,6 @@
 "use client";
 
+import NextImage from "next/image";
 import {
   useCallback,
   useEffect,
@@ -36,24 +37,42 @@ import {
   type EditorCategoryId,
 } from "./editor-options";
 
-function svgToPngDataUrl(svg: string, width: number, height: number): Promise<string> {
-  return new Promise((resolve) => {
-    const canvas = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
-    const context = canvas.getContext("2d");
-    if (!context) {
-      resolve(svg);
-      return;
-    }
-    const img = new Image();
-    img.onload = () => {
-      context.drawImage(img, 0, 0, width, height);
-      const dataUrl = canvas.toDataURL("image/png");
-      resolve(dataUrl);
+// The preview can occupy more than 512 CSS pixels on desktop and needs enough
+// density for high-DPI displays. PNG encoding itself is lossless.
+const PREVIEW_RASTER_SIZE = 1536;
+
+function svgToPngDataUrl(
+  svg: SVGSVGElement,
+  width: number,
+  height: number,
+): Promise<string> {
+  const source = new XMLSerializer().serializeToString(svg);
+  const url = URL.createObjectURL(
+    new Blob([source], { type: "image/svg+xml;charset=utf-8" }),
+  );
+
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => {
+      try {
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const context = canvas.getContext("2d");
+        if (!context) throw new Error("Canvas is unavailable.");
+        context.drawImage(image, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/png"));
+      } catch (error) {
+        reject(error);
+      } finally {
+        URL.revokeObjectURL(url);
+      }
     };
-    img.onerror = () => resolve(svg);
-    img.src = "data:image/svg+xml;base64," + btoa(svg);
+    image.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Could not rasterize the avatar."));
+    };
+    image.src = url;
   });
 }
 
@@ -204,7 +223,7 @@ export function AvatarCustomizer({
       await downloadPng(avatarRef.current, format);
       announce(`${format}px PNG downloaded`);
     } catch {
-      announce("Export failed — try SVG instead");
+      announce("Export failed — please try again");
     }
   };
 
@@ -263,9 +282,24 @@ function AvatarPreview({ config, avatarRef }: { config: AvatarConfig; avatarRef:
 
   useEffect(() => {
     if (!avatarRef.current) return;
-    const svg = new XMLSerializer().serializeToString(avatarRef.current);
-    svgToPngDataUrl(svg, 512, 512).then((dataUrl) => setPngDataUrl(dataUrl));
-  }, [avatarRef]);
+    let cancelled = false;
+
+    svgToPngDataUrl(
+      avatarRef.current,
+      PREVIEW_RASTER_SIZE,
+      PREVIEW_RASTER_SIZE,
+    )
+      .then((dataUrl) => {
+        if (!cancelled) setPngDataUrl(dataUrl);
+      })
+      .catch(() => {
+        if (!cancelled) setPngDataUrl(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [config, avatarRef]);
 
   return (
     <div className="lg:sticky lg:top-6">
@@ -273,15 +307,26 @@ function AvatarPreview({ config, avatarRef }: { config: AvatarConfig; avatarRef:
         <div className="preview-shell relative aspect-square overflow-hidden rounded-[1.6rem]">
           <div className="absolute left-5 top-5 z-10 rounded-full bg-white/75 px-3 py-1.5 text-xs font-bold text-[#564665] shadow-sm backdrop-blur">Live preview</div>
           {pngDataUrl ? (
-            <img src={pngDataUrl} alt="Avatar preview" className="avatar-float block h-full w-full" />
+            <NextImage
+              src={pngDataUrl}
+              alt="Avatar preview"
+              fill
+              unoptimized
+              sizes="(max-width: 1024px) 100vw, 54vw"
+              className="avatar-float object-contain"
+            />
           ) : (
+            <div className="grid h-full w-full place-items-center text-sm font-semibold text-[#564665]">
+              Preparing preview…
+            </div>
+          )}
+          <div className="pointer-events-none absolute h-px w-px overflow-hidden opacity-0" aria-hidden="true">
             <BotAvatar
               ref={avatarRef}
               config={config}
               registry={avatarEditorAssetRegistry}
-              className="avatar-float block h-full w-full"
             />
-          )}
+          </div>
         </div>
       </div>
       <p className="mt-3 text-center text-xs font-medium text-[#81778a]">Every BotForge avatar stays deterministic and export-ready.</p>
