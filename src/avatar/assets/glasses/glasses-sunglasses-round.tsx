@@ -10,28 +10,27 @@ export function GlassesSunglassesRound({
   const layout = createGlassesLayout(anchors, {
     padX: 24,
     padY: 12,
+    round: true,
   });
-
-  const leftRadius = Math.max(layout.left.width, layout.left.height) / 2;
-
-  const rightRadius = Math.max(layout.right.width, layout.right.height) / 2;
 
   return (
     <g {...groupProps}>
-      <circle
+      <ellipse
         cx={layout.left.cx}
         cy={layout.left.cy}
-        r={leftRadius}
+        rx={layout.left.width / 2}
+        ry={layout.left.height / 2}
         fill={frameColor}
         fillOpacity={0.14}
         stroke={frameColor}
         strokeWidth={DEFAULT_FRAME_STROKE}
       />
 
-      <circle
+      <ellipse
         cx={layout.right.cx}
         cy={layout.right.cy}
-        r={rightRadius}
+        rx={layout.right.width / 2}
+        ry={layout.right.height / 2}
         fill={frameColor}
         fillOpacity={0.14}
         stroke={frameColor}

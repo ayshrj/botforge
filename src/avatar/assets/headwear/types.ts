@@ -55,4 +55,5 @@ export interface HeadwearAsset {
    * Hairstyles remain independent assets.
    */
   hairInteraction: HeadwearHairInteraction;
+  fit?: "tapered-crown" | "hood";
 }

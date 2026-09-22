@@ -1,6 +1,5 @@
 "use client";
 
-import NextImage from "next/image";
 import {
   useCallback,
   useEffect,
@@ -10,11 +9,12 @@ import {
 } from "react";
 
 import {
-  avatarEditorAssetRegistry,
-  BotAvatar,
   type AvatarConfig,
 } from "./avatar-editor-adapter";
 import { AssetSelector } from "./asset-selector";
+import { AvatarPreview } from "./avatar-preview";
+import { PngAvatar } from "./png-avatar";
+import { HairPanel } from "./hair-panel";
 import { downloadPng } from "./avatar-export";
 import { loadAvatarConfig, saveAvatarConfig, serializeAvatarConfig } from "./avatar-storage";
 import { CategoryNav } from "./category-nav";
@@ -36,45 +36,6 @@ import {
   skinColorOptions,
   type EditorCategoryId,
 } from "./editor-options";
-
-// The preview can occupy more than 512 CSS pixels on desktop and needs enough
-// density for high-DPI displays. PNG encoding itself is lossless.
-const PREVIEW_RASTER_SIZE = 1536;
-
-function svgToPngDataUrl(
-  svg: SVGSVGElement,
-  width: number,
-  height: number,
-): Promise<string> {
-  const source = new XMLSerializer().serializeToString(svg);
-  const url = URL.createObjectURL(
-    new Blob([source], { type: "image/svg+xml;charset=utf-8" }),
-  );
-
-  return new Promise((resolve, reject) => {
-    const image = new Image();
-    image.onload = () => {
-      try {
-        const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
-        const context = canvas.getContext("2d");
-        if (!context) throw new Error("Canvas is unavailable.");
-        context.drawImage(image, 0, 0, width, height);
-        resolve(canvas.toDataURL("image/png"));
-      } catch (error) {
-        reject(error);
-      } finally {
-        URL.revokeObjectURL(url);
-      }
-    };
-    image.onerror = () => {
-      URL.revokeObjectURL(url);
-      reject(new Error("Could not rasterize the avatar."));
-    };
-    image.src = url;
-  });
-}
 
 interface AvatarCustomizerProps {
   initialConfig?: AvatarConfig;
@@ -101,6 +62,7 @@ export function AvatarCustomizer({
   const [activeCategory, setActiveCategory] = useState<EditorCategoryId>("face");
   const [exportOpen, setExportOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [motion, setMotion] = useState(true);
   const avatarRef = useRef<SVGSVGElement>(null);
   const hydrated = useRef(Boolean(initialConfig));
   const config = history.present;
@@ -228,7 +190,7 @@ export function AvatarCustomizer({
   };
 
   return (
-    <section className="mx-auto w-full max-w-[1440px]" aria-label="BotForge avatar customizer">
+    <section className="avatar-editor mx-auto w-full max-w-[1440px]" data-motion={motion} aria-label="BotForge avatar customizer">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2" aria-label="Editing history">
           <ActionButton label="Undo" icon="↶" onClick={undo} disabled={!history.past.length} />
@@ -241,7 +203,7 @@ export function AvatarCustomizer({
           <div className="relative">
             <ActionButton label="Export" icon="↓" onClick={() => setExportOpen((open) => !open)} />
             {exportOpen && (
-              <div className="absolute right-0 z-30 mt-2 w-52 overflow-hidden rounded-2xl border border-[#ddd2c7] bg-white p-1.5 shadow-2xl">
+              <div className="export-menu absolute right-0 z-30 mt-2 w-52 overflow-hidden rounded-2xl border border-[#ddd2c7] bg-white p-1.5 shadow-2xl">
                 {[512, 1024, 2048].map((size) => (
                   <ExportButton key={size} label={`PNG · ${size} × ${size}`} onClick={() => exportAvatar(size)} />
                 ))}
@@ -252,7 +214,7 @@ export function AvatarCustomizer({
       </div>
 
       <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.08fr)_minmax(420px,0.92fr)]">
-        <AvatarPreview config={config} avatarRef={avatarRef} />
+        <AvatarPreview config={config} avatarRef={avatarRef} motion={motion} onMotionChange={setMotion} />
         <div className="min-w-0 overflow-hidden rounded-[2rem] border border-[#ded5ca] bg-[#f7f2e9]/95 shadow-[0_26px_70px_rgba(60,42,76,0.12)] backdrop-blur">
           <div className="px-5 pb-4 pt-5 sm:px-6">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#8a6fc4]">Workshop</p>
@@ -260,77 +222,20 @@ export function AvatarCustomizer({
           </div>
           <CategoryNav categories={editorCategories} activeCategory={activeCategory} onChange={setActiveCategory} />
           <div id={`avatar-editor-panel-${activeCategory}`} role="tabpanel" aria-labelledby={`avatar-editor-tab-${activeCategory}`} className="min-h-[31rem] p-5 sm:p-6">
-            <EditorPanel
+            <div key={activeCategory} className="editor-panel-content"><EditorPanel
               category={activeCategory}
               config={config}
               updateConfig={updateConfig}
               showCustomColorPicker={showCustomColorPicker}
-            />
+            /></div>
           </div>
         </div>
       </div>
 
       <div aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center">
-        {toast && <div className="rounded-full bg-[#30263d] px-5 py-2.5 text-sm font-semibold text-white shadow-xl">{toast}</div>}
+        {toast && <div key={toast} className="editor-toast rounded-full bg-[#30263d] px-5 py-2.5 text-sm font-semibold text-white shadow-xl">{toast}</div>}
       </div>
     </section>
-  );
-}
-
-function AvatarPreview({ config, avatarRef }: { config: AvatarConfig; avatarRef: React.RefObject<SVGSVGElement | null> }) {
-  const [pngDataUrl, setPngDataUrl] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!avatarRef.current) return;
-    let cancelled = false;
-
-    svgToPngDataUrl(
-      avatarRef.current,
-      PREVIEW_RASTER_SIZE,
-      PREVIEW_RASTER_SIZE,
-    )
-      .then((dataUrl) => {
-        if (!cancelled) setPngDataUrl(dataUrl);
-      })
-      .catch(() => {
-        if (!cancelled) setPngDataUrl(null);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [config, avatarRef]);
-
-  return (
-    <div className="lg:sticky lg:top-6">
-      <div className="overflow-hidden rounded-[2rem] border border-white/70 bg-white/50 p-3 shadow-[0_30px_80px_rgba(71,50,91,0.16)] backdrop-blur sm:p-4">
-        <div className="preview-shell relative aspect-square overflow-hidden rounded-[1.6rem]">
-          <div className="absolute left-5 top-5 z-10 rounded-full bg-white/75 px-3 py-1.5 text-xs font-bold text-[#564665] shadow-sm backdrop-blur">Live preview</div>
-          {pngDataUrl ? (
-            <NextImage
-              src={pngDataUrl}
-              alt="Avatar preview"
-              fill
-              unoptimized
-              sizes="(max-width: 1024px) 100vw, 54vw"
-              className="avatar-float object-contain"
-            />
-          ) : (
-            <div className="grid h-full w-full place-items-center text-sm font-semibold text-[#564665]">
-              Preparing preview…
-            </div>
-          )}
-          <div className="pointer-events-none absolute h-px w-px overflow-hidden opacity-0" aria-hidden="true">
-            <BotAvatar
-              ref={avatarRef}
-              config={config}
-              registry={avatarEditorAssetRegistry}
-            />
-          </div>
-        </div>
-      </div>
-      <p className="mt-3 text-center text-xs font-medium text-[#81778a]">Every BotForge avatar stays deterministic and export-ready.</p>
-    </div>
   );
 }
 
@@ -345,12 +250,7 @@ function EditorPanel({ category, config, updateConfig, showCustomColorPicker }: 
   const previewFor = <K extends keyof AvatarConfig>(key: K) => {
     function AvatarOptionPreview(value: string) {
       return (
-        <BotAvatar
-          config={{ ...config, [key]: value }}
-          registry={avatarEditorAssetRegistry}
-          className="h-full w-full"
-          aria-hidden="true"
-        />
+        <PngAvatar config={{ ...config, [key]: value }} />
       );
     }
 
@@ -393,7 +293,7 @@ function EditorPanel({ category, config, updateConfig, showCustomColorPicker }: 
     case "skin":
       return <PanelSection title="Skin tone" description="Pick a palette color or create your own.">{color("skinColor", "Skin color", skinColorOptions)}</PanelSection>;
     case "hair":
-      return <PanelSection title="Hair style" description="Go polished, playful, or proudly bald.">{asset("hairStyle", "Hair style", hairOptions, "hair-none")}</PanelSection>;
+      return <HairPanel config={config} onHairChange={(value) => updateConfig("hairStyle", value)} onColorChange={(value) => updateConfig("hairColor", value)} showCustomColorPicker={showCustomColorPicker} />;
     case "hairColor":
       return <PanelSection title="Hair color" description="Recolor every compatible hairstyle.">{color("hairColor", "Hair color", hairColorOptions)}</PanelSection>;
     case "glasses":
@@ -448,7 +348,7 @@ function ActionButton({ label, icon, onClick, disabled, featured }: {
   featured?: boolean;
 }) {
   return <button type="button" onClick={onClick} disabled={disabled} className={`action-button ${featured ? "action-button-featured" : ""}`}>
-    <span aria-hidden="true">{icon}</span><span>{label}</span>
+    <span className="action-icon" aria-hidden="true">{icon}</span><span>{label}</span>
   </button>;
 }
 

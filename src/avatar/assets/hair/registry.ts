@@ -1,4 +1,7 @@
 import {
+  hairWolfCut,
+  hairSculptedBob,
+  hairPixieSweep,
   hairAfro,
   hairBluntBangs,
   hairBraidedPonytail,
@@ -76,6 +79,9 @@ export function createHairAssetRegistry(
 }
 
 export const hairAssets = [
+  hairWolfCut,
+  hairSculptedBob,
+  hairPixieSweep,
   // Batch 1 — short
   hairShortBasic,
   hairShortSidePart,

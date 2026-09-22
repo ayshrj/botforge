@@ -32,6 +32,7 @@ export const HEADWEAR_REGISTRY = {
     id: "headwear-bucket-hat",
     label: "Bucket Hat",
     Component: HeadwearBucketHat,
+    fit: "tapered-crown",
     hairInteraction: "covers-upper-hair",
   },
 
@@ -39,6 +40,7 @@ export const HEADWEAR_REGISTRY = {
     id: "headwear-wide-brim-hat",
     label: "Wide Brim Hat",
     Component: HeadwearWideBrimHat,
+    fit: "tapered-crown",
     hairInteraction: "covers-upper-hair",
   },
 
@@ -53,6 +55,7 @@ export const HEADWEAR_REGISTRY = {
     id: "headwear-hood",
     label: "Hood",
     Component: HeadwearHood,
+    fit: "hood",
     hairInteraction: "frames-hair",
   },
 

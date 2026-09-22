@@ -12,6 +12,7 @@ import { hairAssets } from "./assets/hair/registry";
 import type { HairAsset } from "./assets/hair/types";
 import { HEADWEAR_REGISTRY } from "./assets/headwear/registry";
 import { getAccessoryAnchors } from "./design-system";
+import { HairScalp } from "./components/hair-scalp";
 
 export const assetCatalog = {
   face: faceAssetRegistry,
@@ -47,9 +48,12 @@ export const avatarAssetRegistry: AvatarAssetRegistry = {
             : undefined,
           "hair-front": Front
             ? ({ config, geometry }: AvatarAssetProps) => (
-                <g transform={geometry.hairTransform}>
-                  <Front hairColor={config.hairColor} />
-                </g>
+                <>
+                  <HairScalp config={config} geometry={geometry} />
+                  <g transform={geometry.hairTransform}>
+                    <Front hairColor={config.hairColor} />
+                  </g>
+                </>
               )
             : undefined,
         },
@@ -90,7 +94,11 @@ export const avatarAssetRegistry: AvatarAssetRegistry = {
             transform={
               asset.id === "headwear-headphones"
                 ? undefined
-                : geometry.headwearTransform
+                : "fit" in asset && asset.fit === "tapered-crown"
+                  ? geometry.taperedHatTransform
+                  : "fit" in asset && asset.fit === "hood"
+                    ? geometry.hoodTransform
+                    : geometry.headwearTransform
             }
           >
             <asset.Component

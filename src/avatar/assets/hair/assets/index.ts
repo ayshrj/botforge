@@ -1,4 +1,7 @@
 export { HairShortBasicFront, hairShortBasic } from "./hair-short-basic";
+export { hairWolfCut } from "./hair-wolf-cut";
+export { hairSculptedBob } from "./hair-sculpted-bob";
+export { hairPixieSweep } from "./hair-pixie-sweep";
 
 export {
   HairShortSidePartFront,

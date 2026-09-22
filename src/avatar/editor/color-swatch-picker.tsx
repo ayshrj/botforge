@@ -32,7 +32,7 @@ export function ColorSwatchPicker({
               title={color.label}
               onClick={() => onChange(color.value)}
               className={[
-                "relative aspect-square w-full rounded-2xl border-2",
+                "color-swatch relative aspect-square w-full rounded-2xl border-2",
                 "transition-all hover:-translate-y-0.5 hover:shadow-md",
                 "focus-visible:outline-none focus-visible:ring-2",
                 "focus-visible:ring-white focus-visible:ring-offset-2",
@@ -46,7 +46,7 @@ export function ColorSwatchPicker({
               {selected && (
                 <span
                   aria-hidden="true"
-                  className="absolute inset-0 grid place-items-center text-base font-bold text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]"
+                  className="selection-mark absolute inset-0 grid place-items-center text-base font-bold text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]"
                 >
                   ✓
                 </span>

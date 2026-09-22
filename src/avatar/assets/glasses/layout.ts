@@ -25,15 +25,18 @@ export interface GlassesLayout {
 export interface GlassesLayoutOptions {
   padX?: number;
   padY?: number;
+  round?: boolean;
 }
 
 function createLensBox(
   eye: GlassesEyeAnchor,
   padX: number,
   padY: number,
+  maxWidth: number,
+  round: boolean,
 ): GlassesLensBox {
-  const width = eye.width + padX * 2;
   const height = eye.height + padY * 2;
+  const width = Math.min(maxWidth, round ? Math.max(height, eye.width + padX * 2) : eye.width + padX * 2);
 
   const x = eye.cx - width / 2;
   const y = eye.cy - height / 2;
@@ -59,13 +62,9 @@ export function createGlassesLayout(
 
   const gap = anchors.rightEye.cx - anchors.leftEye.cx;
   const maxSize = gap - 12;
-  const fitEye = (eye: GlassesEyeAnchor) => ({
-    ...eye,
-    width: Math.min(eye.width, maxSize - padX * 2),
-    height: Math.min(eye.height, maxSize - padY * 2),
-  });
-  const left = createLensBox(fitEye(anchors.leftEye), padX, padY);
-  const right = createLensBox(fitEye(anchors.rightEye), padX, padY);
+  // Horizontal crowding must never shrink the vertical eye-clearance envelope.
+  const left = createLensBox(anchors.leftEye, padX, padY, maxSize, options.round ?? false);
+  const right = createLensBox(anchors.rightEye, padX, padY, maxSize, options.round ?? false);
 
   return {
     left,

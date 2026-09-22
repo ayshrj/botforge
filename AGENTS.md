@@ -24,11 +24,13 @@ The application currently includes:
 - face-aware geometry and semantic anchors;
 - five configurable head poses;
 - registered faces, hair, glasses, facial hair, headwear, ears, and accessories;
+- 31 hairstyles, grouped into short, flowing, curly, and tied families;
 - curated and custom colors for relevant features and the background;
 - explicit `*-none` selections for optional asset families, including hair;
 - undo/redo, reset, randomize, and JSON configuration copy;
 - versioned browser-local persistence;
 - PNG preview and 512/1024/2048 PNG downloads;
+- optional cached-PNG blinking and gentle preview motion, with a pause control;
 - desktop and mobile Playwright coverage.
 
 Reset always means `DEFAULT_AVATAR_CONFIG`, even when the editor received `initialConfig`. `initialConfig` controls only the initial in-memory value and disables loading a saved browser value for that mount.
@@ -37,7 +39,11 @@ Reset always means `DEFAULT_AVATAR_CONFIG`, even when the editor received `initi
 
 Every complete avatar must have exactly two equal dark vertical capsule eyes. Keep them readable across face shapes and assets. Do not add pupils, irises, sclera, highlights, eyelashes, eyebrows, a nose, or a mouth. Facial hair must not draw a mouth.
 
+The only eye-shape exception is transient editor-only blinking: both capsules compress together in detached rasterization copies. The canonical SVG and all exported PNGs retain full-height open eyes.
+
 Keep the artwork flat, clean, stylized, and vector based. Avoid realistic anatomy, raster assets, textures, 3D rendering, or detailed strand work. Broad secondary color regions are acceptable when they strengthen a silhouette.
+
+`color-utils.ts` supplies flat color mixing and the shared hair palette. Redesigned hairstyles use large base/shadow/highlight regions, not gradients or individual strands. Face tone follows the selected face's path mask; blush blends with the selected skin color.
 
 The canonical canvas is 512×512. The configured background is part of the exported avatar. Rich editor-only framing, shadows, motion, and ambience must stay outside the SVG.
 
@@ -146,6 +152,8 @@ The background renders before the shared head group. Change layer order only wit
 
 Every registry entry must have a unique stable ID and a valid component. Add asset IDs to the exact family union/constant, register the component, expose it through editor options, and test that the default and randomizer can resolve it.
 
+New hairstyles must also be assigned a family in `assets/hair/style-groups.ts`, whose mapping exhaustively covers the real hair IDs. `hair-none` remains available regardless of the active filter.
+
 Headwear compatibility is declarative through `hairInteraction`; `getPresentation()` converts this metadata into renderer behavior. Prefer graceful adaptation to hiding an asset. Add compatibility rules only for real visual conflicts.
 
 ## Editor state and browser behavior
@@ -157,6 +165,8 @@ History is bounded and supports Ctrl/Cmd+Z and Ctrl/Cmd+Shift+Z. New editor acti
 Persistence is localStorage schema version 1 at `botforge.avatar.v1`. All restored data must pass `parseAvatarConfig()` before rendering. Invalid data falls back safely to the canonical default.
 
 The visible preview is a PNG rasterization of the canonical SVG. The SVG used for rasterization may exist only in an offscreen editor container; do not add a visible SVG or SVG download action. PNG downloads rasterize that same source at the requested square size. Never hand-maintain a second export tree or geometry set.
+
+`editor/avatar-raster.ts` is the shared PNG conversion path. `PngAvatar` uses it for both 320px option cards and the 1536px hero; object URLs must be released and stale renders cancelled. The hero caches open, half, and closed PNG frames per configuration; CSS animates those frames without rasterizing on each animation tick. Motion is local presentation state, never persisted avatar data. Downloads use the unchanged canonical source with open eyes.
 
 Editor animation must be optional decoration. Respect `prefers-reduced-motion`. Keep touch targets comfortable, tabs keyboard navigable, focus visible, selection semantic (`aria-selected`/`aria-pressed`), and toast feedback in a polite live region.
 

@@ -63,10 +63,10 @@ function AssetButton({ label, selected, onClick, preview }: AssetButtonProps) {
       aria-pressed={selected}
       onClick={onClick}
       className={[
-        "group relative overflow-hidden rounded-[1.35rem] border p-2 text-left",
+        "asset-card group relative overflow-hidden rounded-[1.35rem] border p-2 text-left",
         "text-sm font-semibold transition-all duration-200",
         "focus-visible:outline-none focus-visible:ring-2",
-        "focus-visible:ring-white focus-visible:ring-offset-2",
+        "focus-visible:ring-[#7655bd] focus-visible:ring-offset-2",
         "focus-visible:ring-offset-[#f7f2e9]",
         selected
           ? "border-[#7c5cff] bg-[#f0ebff] text-[#2c2438] shadow-[0_8px_22px_rgba(92,67,158,0.18)]"
@@ -77,7 +77,7 @@ function AssetButton({ label, selected, onClick, preview }: AssetButtonProps) {
       <span className="block truncate px-1 pb-1 pr-5">{label}</span>
 
       {selected && (
-        <span className="absolute right-3 top-3 grid h-6 w-6 place-items-center rounded-full bg-[#7c5cff] text-xs text-white shadow" aria-hidden="true">
+        <span className="selection-mark absolute right-3 top-3 grid h-6 w-6 place-items-center rounded-full bg-[#7c5cff] text-xs text-white shadow" aria-hidden="true">
           ✓
         </span>
       )}

@@ -14,6 +14,7 @@ import {
 } from "./components/core-layers";
 import { HeadRotationGroup } from "./components/head-rotation-group";
 import { RegisteredAssetLayer } from "./components/registered-asset-layer";
+import { FaceSilhouetteMask } from "./components/face-silhouette-mask";
 
 export interface BotAvatarProps
   extends Omit<SVGProps<SVGSVGElement>, "children" | "viewBox"> {
@@ -51,9 +52,7 @@ export function BotAvatar({
       data-botforge-avatar
     >
       <defs>
-        <clipPath id={`${id}-face`} clipPathUnits="userSpaceOnUse">
-          <rect {...geometry.face} rx={geometry.face.width * 0.42} />
-        </clipPath>
+        <FaceSilhouetteMask id={`${id}-face`} faceShape={config.faceShape} geometry={geometry} />
         <clipPath id={`${id}-hair`} clipPathUnits="userSpaceOnUse">
           <rect
             x="-100"
@@ -89,21 +88,21 @@ export function BotAvatar({
                 key={layer}
                 geometry={geometry}
                 blushColor={config.blushColor}
+                skinColor={config.skinColor}
               />
             );
           }
 
           const clipId =
-            layer === "facial-hair"
-              ? `${id}-face`
-              : presentation.cropUpperHair &&
-                  (layer === "hair-front" || layer === "hair-back")
-                ? `${id}-hair`
-                : undefined;
+            presentation.cropUpperHair &&
+            (layer === "hair-front" || layer === "hair-back")
+              ? `${id}-hair`
+              : undefined;
 
           return (
             <g
               key={layer}
+              mask={layer === "facial-hair" ? `url(#${id}-face)` : undefined}
               clipPath={clipId ? `url(#${clipId})` : undefined}
             >
               <RegisteredAssetLayer

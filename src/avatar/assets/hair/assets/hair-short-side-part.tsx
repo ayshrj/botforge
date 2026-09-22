@@ -1,39 +1,14 @@
+import { getHairPalette } from "../../../color-utils";
 import type { HairAsset, HairLayerProps } from "../types";
 
 export function HairShortSidePartFront({ hairColor }: HairLayerProps) {
+  const { base, shadow, light } = getHairPalette(hairColor);
   return (
-    <g color={hairColor}>
-      <path
-        fill="currentColor"
-        d="
-          M 101 207
-          C 100 169, 113 136, 139 112
-          C 166 88, 203 78, 242 80
-          C 285 81, 326 94, 355 119
-          C 378 139, 390 165, 390 195
-          C 390 201, 390 207, 389 213
-          C 368 201, 346 194, 323 191
-          C 298 187, 277 188, 256 192
-          C 237 196, 218 199, 198 199
-          C 182 199, 168 197, 153 193
-          C 137 199, 119 204, 101 207
-          Z
-        "
-      />
-
-      <path
-        fill="currentColor"
-        d="
-          M 153 193
-          C 169 169, 190 148, 216 134
-          C 242 119, 272 111, 304 111
-          C 326 111, 345 115, 360 123
-          C 337 118, 314 121, 291 130
-          C 265 140, 240 155, 218 172
-          C 199 186, 180 195, 160 200
-          Z
-        "
-      />
+    <g>
+      <path fill={shadow} d="M103 215C96 158 124 111 171 91C214 73 290 78 335 103C377 126 394 164 389 225L371 208C345 185 319 176 296 174L292 103C239 146 210 185 163 203Z" />
+<path fill={base} d="M98 202C91 164 105 128 137 102C171 75 219 64 263 77L292 91C284 125 259 155 220 178C184 200 136 212 98 202Z" />
+<path fill={light} d="M127 159C158 111 218 88 265 96C230 102 214 126 184 138C164 146 145 149 127 159Z" />
+<path fill={base} d="M307 108C346 115 376 145 378 186C365 161 347 148 313 142Z" />
     </g>
   );
 }

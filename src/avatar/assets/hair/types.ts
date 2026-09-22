@@ -17,6 +17,7 @@ export const HAIR_STYLE_IDS = [
   "hair-high-ponytail", "hair-low-ponytail", "hair-bun", "hair-top-knot",
   "hair-afro", "hair-twin-buns", "hair-braided-ponytail", "hair-thick-locks",
   "hair-mohawk-soft",
+  "hair-wolf-cut", "hair-sculpted-bob", "hair-pixie-sweep",
 ] as const;
 
 export type HairStyleId = (typeof HAIR_STYLE_IDS)[number];
@@ -36,7 +37,7 @@ export interface HairLayerProps {
  * A React component representing one hair layer.
  *
  * Components render in the canonical 512×512 avatar coordinate system.
- * They must not apply the global 17° head rotation themselves.
+ * They must not apply the configured head-pose rotation themselves.
  */
 export type HairLayerComponent = ComponentType<HairLayerProps>;
 

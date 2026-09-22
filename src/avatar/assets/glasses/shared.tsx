@@ -46,8 +46,8 @@ export function GlassesTemples({
   const leftStartY = left.cy - left.height * 0.18;
   const rightStartY = right.cy - right.height * 0.18;
 
-  const leftEndX = Math.max(faceBounds.left + 10, left.x - 34);
-  const rightEndX = Math.min(faceBounds.right - 10, right.right + 34);
+  const leftEndX = faceBounds.left + 10;
+  const rightEndX = faceBounds.right - 10;
 
   return (
     <>

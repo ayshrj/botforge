@@ -42,7 +42,7 @@ export function CategoryNav({
                 if (event.key === "ArrowLeft") { event.preventDefault(); moveFocus(index, -1); }
               }}
               className={[
-                "rounded-2xl px-3 py-2 text-xs font-semibold transition-all sm:text-sm",
+                "category-tab rounded-2xl px-3 py-2 text-xs font-semibold transition-all sm:text-sm",
                 "focus-visible:outline-none focus-visible:ring-2",
                 "focus-visible:ring-white focus-visible:ring-offset-2",
                 "focus-visible:ring-[#7c5cff] focus-visible:ring-offset-[#f7f2e9]",

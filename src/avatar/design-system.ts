@@ -18,6 +18,15 @@ export const AVATAR_DESIGN = {
     headwear: { x: 244, y: 80, width: 310 },
     beard: { x: 79, y: 298, width: 278, height: 209 },
   },
+  // Top-edge profiles in the canonical beard envelope. The selected face mask
+  // supplies the cheeks/jaw, so coverage extends beyond that silhouette.
+  beardProfiles: {
+    stubble: { cheek: .12, center: .65, opacity: .32 },
+    short: { cheek: .06, center: .52, opacity: 1 },
+    medium: { cheek: 0, center: .39, opacity: 1 },
+    full: { cheek: -.04, center: .26, opacity: 1 },
+  },
+  headwear: { taperedCrownWidth: { "face-round": 1, "face-oval": 1, "face-wide": 1, "face-narrow": 1, "face-soft-square": 1.22 } },
   faces: {
     "face-round": { source: { x: 30, y: 104, width: 376, height: 376 }, width: 280, height: 294, top: 145, eyeSpread: 1 },
     "face-oval": { source: { x: 58, y: 96, width: 320, height: 392 }, width: 252, height: 310, top: 133, eyeSpread: .94 },
@@ -65,14 +74,22 @@ export function getFaceGeometry(faceShape: FaceShapeId) {
   };
   const hairSource = AVATAR_DESIGN.source.hair;
   const headwearSource = AVATAR_DESIGN.source.headwear;
+  // Rise at the center to preserve parts/fringes; stop above the eye envelope.
+  const scalpBottom = face.y + face.height * .28;
+  const scalpPart = face.y + face.height * .025;
   return {
     face, anchors, eyeWidth, eyeHeight,
+    scalpPath: `M ${face.x - 1} ${face.y - 1} H ${face.x + face.width + 1} V ${scalpBottom}
+      C ${face.x + face.width * .9} ${scalpBottom}, ${face.x + face.width * .8} ${scalpPart}, ${centerX} ${scalpPart}
+      C ${face.x + face.width * .2} ${scalpPart}, ${face.x + face.width * .1} ${scalpBottom}, ${face.x - 1} ${scalpBottom} Z`,
     faceTransform: fitBounds(spec.source, face),
     hairTransform: `translate(${centerX} ${face.y - 28}) scale(${spec.width / hairSource.width} .88) translate(${-hairSource.x} ${-hairSource.y})`,
     headwearTransform: `translate(${centerX} ${face.y - 28}) scale(${spec.width / headwearSource.width} .88) translate(${-headwearSource.x} ${-headwearSource.y})`,
+    taperedHatTransform: `translate(${centerX} ${face.y - 28}) scale(${spec.width / headwearSource.width * AVATAR_DESIGN.headwear.taperedCrownWidth[faceShape]} .88) translate(${-headwearSource.x} ${-headwearSource.y})`,
+    hoodTransform: `translate(${centerX} ${face.y - 28}) scale(${spec.width / headwearSource.width} ${.88 * spec.height / AVATAR_DESIGN.faces["face-round"].height}) translate(${-headwearSource.x} ${-headwearSource.y})`,
     beardTransform: fitBounds(
       AVATAR_DESIGN.source.beard,
-      { x: face.x + spec.width * .035, y: anchors.beardTop.y, width: spec.width * .93, height: anchors.chin.y - anchors.beardTop.y + 12 },
+      { x: face.x - 1, y: anchors.beardTop.y, width: spec.width + 2, height: anchors.chin.y - anchors.beardTop.y + 2 },
     ),
     glasses: {
       leftEye: { cx: anchors.eyeLeft.x, cy: eyeY, width: eyeWidth, height: eyeHeight },
@@ -83,11 +100,26 @@ export function getFaceGeometry(faceShape: FaceShapeId) {
 }
 export type FaceGeometry = ReturnType<typeof getFaceGeometry>;
 
+export type BeardProfile = keyof typeof AVATAR_DESIGN.beardProfiles;
+
+export function getBeardCoveragePath(profile: BeardProfile): string {
+  const { x, y, width, height } = AVATAR_DESIGN.source.beard;
+  const { cheek, center } = AVATAR_DESIGN.beardProfiles[profile];
+  const edgeY = y + height * cheek;
+  const centerY = y + height * center;
+  // Overscan at the sides and below the chin; exact face masking owns the edge.
+  return `M ${x - width * .1} ${edgeY} H ${x}
+    C ${x + width * .2} ${edgeY}, ${x + width * .2} ${centerY}, ${x + width * .5} ${centerY}
+    C ${x + width * .8} ${centerY}, ${x + width * .8} ${edgeY}, ${x + width} ${edgeY}
+    H ${x + width * 1.1} V ${y + height * 1.1} H ${x - width * .1} Z`;
+}
+
 // Attach jewelry to the selected ear's actual lobe, including fantasy ears.
 export function getAccessoryAnchors(config: Readonly<AvatarConfig>, geometry: FaceGeometry) {
   const anchors = geometry.anchors;
   if (config.ears === "ears-cat" || config.ears === "ears-bunny") {
-    return { ...anchors, earrings: { left: anchors.headTop.left, right: anchors.headTop.right } };
+    const earBases = { left: anchors.headTop.left, right: anchors.headTop.right };
+    return { ...anchors, earrings: earBases, earpiece: earBases };
   }
   const lobe = config.ears === "ears-large" ? 40 : config.ears === "ears-small" ? 23 : 28;
   return { ...anchors, earrings: {
