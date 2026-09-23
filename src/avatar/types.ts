@@ -1,3 +1,5 @@
+import type { AvatarAnimationId } from "./animation/types";
+
 import type {
   AccessorySelectionId,
   EarAssetId,
@@ -10,11 +12,24 @@ import type {
 
 export interface AvatarConfig {
   headPose: HeadPose;
+
+  /**
+   * Multiple avatar animations may be active together.
+   *
+   * Movement animations can stack.
+   * The editor keeps eye animations mutually exclusive.
+   *
+   * An empty array means the avatar is still.
+   */
+  animations: readonly AvatarAnimationId[];
+
   background: string;
+
   glassesColor: string;
   facialHairColor: string;
   headwearColor: string;
   accessoryColor: string;
+
   faceShape: FaceShapeId;
   skinColor: string;
 
@@ -32,11 +47,16 @@ export interface AvatarConfig {
 
 export const DEFAULT_AVATAR_CONFIG: Readonly<AvatarConfig> = {
   headPose: "tilt-right-soft",
+
+  animations: ["animation-blink", "animation-breathe"],
+
   background: "#E9DFF5",
+
   glassesColor: "#393044",
   facialHairColor: "#493126",
   headwearColor: "#7961A8",
   accessoryColor: "#D9A54D",
+
   faceShape: "face-round",
   skinColor: "#D99B73",
 
@@ -52,5 +72,12 @@ export const DEFAULT_AVATAR_CONFIG: Readonly<AvatarConfig> = {
   blushColor: "#D98787",
 };
 
-export const HEAD_POSES = ["upright", "tilt-left-soft", "tilt-right-soft", "tilt-left-strong", "tilt-right-strong"] as const;
+export const HEAD_POSES = [
+  "upright",
+  "tilt-left-soft",
+  "tilt-right-soft",
+  "tilt-left-strong",
+  "tilt-right-strong",
+] as const;
+
 export type HeadPose = (typeof HEAD_POSES)[number];

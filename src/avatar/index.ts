@@ -22,6 +22,29 @@ export type {
   HeadwearSelectionId,
 } from "./asset-ids";
 
+export { AVATAR_ANIMATION_IDS } from "./animation/types";
+
+export type {
+  AvatarAnimationChannel,
+  AvatarAnimationDefinition,
+  AvatarAnimationId,
+  AvatarEyeAnimationDefinition,
+  AvatarEyeSequence,
+  AvatarMovementAnimationDefinition,
+} from "./animation/types";
+
+export {
+  AVATAR_ANIMATIONS,
+  AVATAR_ANIMATION_REGISTRY,
+  EYE_ANIMATIONS,
+  MOVEMENT_ANIMATIONS,
+  canonicalizeAnimations,
+  getAvatarAnimation,
+  getSelectedEyeAnimation,
+  getSelectedMovementAnimations,
+  toggleAvatarAnimation,
+} from "./animation/registry";
+
 export { EMPTY_AVATAR_ASSET_REGISTRY } from "./asset-registry";
 
 export type {
@@ -35,9 +58,9 @@ export { AVATAR_DESIGN } from "./design-system";
 
 export type { AvatarBounds, AvatarPoint } from "./design-system";
 
-export { DEFAULT_AVATAR_CONFIG } from "./types";
+export { DEFAULT_AVATAR_CONFIG, HEAD_POSES } from "./types";
 
-export type { AvatarConfig } from "./types";
+export type { AvatarConfig, HeadPose } from "./types";
 
 export {
   AVATAR_HEAD_LAYER_ORDER,
