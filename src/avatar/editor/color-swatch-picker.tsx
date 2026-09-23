@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import type { ColorOption } from "./editor-options";
 
 interface ColorSwatchPickerProps {
@@ -20,7 +21,7 @@ export function ColorSwatchPicker({
       <legend className="sr-only">{label}</legend>
 
       <div className="grid grid-cols-4 gap-3 sm:grid-cols-6">
-        {colors.map((color) => {
+        {colors.map((color, index) => {
           const selected = color.value.toLowerCase() === value.toLowerCase();
 
           return (
@@ -41,7 +42,7 @@ export function ColorSwatchPicker({
                   ? "border-[#30263d] ring-2 ring-[#7c5cff]/30"
                   : "border-white shadow-sm",
               ].join(" ")}
-              style={{ backgroundColor: color.value }}
+              style={{ backgroundColor: color.value, "--stagger": index } as CSSProperties}
             >
               {selected && (
                 <span

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import { HAIR_STYLE_GROUPS, hairStyleGroups, type HairStyleGroup } from "../assets/hair/style-groups";
 import type { AvatarConfig } from "../types";
 import { AssetSelector } from "./asset-selector";
@@ -31,7 +31,8 @@ export function HairPanel({ config, onHairChange, onColorChange, showCustomColor
       <span className="shrink-0 whitespace-nowrap rounded-full bg-[#eae2f3] px-3 py-1.5 text-xs font-bold text-[#7655a2]">{hairOptions.length} cuts</span>
     </div>
     <div className="hair-filters" aria-label="Filter hairstyles">
-      {HAIR_STYLE_GROUPS.map((item) => <button key={item} type="button"
+      {HAIR_STYLE_GROUPS.map((item, index) => <button key={item} type="button"
+        style={{ "--stagger": index } as CSSProperties}
         aria-pressed={group === item} onClick={() => setGroup(item)}>{item}</button>)}
     </div>
     <AssetSelector label="Hair style" options={options} value={config.hairStyle}

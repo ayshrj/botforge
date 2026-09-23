@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { humanizeAssetId } from "./editor-options";
 
 interface AssetSelectorProps<T extends string> {
@@ -31,16 +32,18 @@ export function AssetSelector<T extends string>({
               selected={value === noneValue}
               onClick={() => onChange(noneValue)}
               preview={renderPreview?.(noneValue)}
+              stagger={0}
             />
           )}
 
-          {options.map((option) => (
+          {options.map((option, index) => (
             <AssetButton
               key={option}
               label={humanizeAssetId(option)}
               selected={value === option}
               onClick={() => onChange(option)}
               preview={renderPreview?.(option)}
+              stagger={index + (noneValue !== undefined ? 1 : 0)}
             />
           ))}
         </div>
@@ -54,14 +57,16 @@ interface AssetButtonProps {
   selected: boolean;
   onClick: () => void;
   preview?: React.ReactNode;
+  stagger?: number;
 }
 
-function AssetButton({ label, selected, onClick, preview }: AssetButtonProps) {
+function AssetButton({ label, selected, onClick, preview, stagger = 0 }: AssetButtonProps) {
   return (
     <button
       type="button"
       aria-pressed={selected}
       onClick={onClick}
+      style={{ "--stagger": stagger } as CSSProperties}
       className={[
         "asset-card group relative overflow-hidden rounded-[1.35rem] border p-2 text-left",
         "text-sm font-semibold transition-all duration-200",

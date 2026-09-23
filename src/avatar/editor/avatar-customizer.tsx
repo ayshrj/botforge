@@ -60,6 +60,7 @@ export function AvatarCustomizer({
     future: [],
   }));
   const [activeCategory, setActiveCategory] = useState<EditorCategoryId>("face");
+  const [panelDirection, setPanelDirection] = useState<"forward" | "back">("forward");
   const [exportOpen, setExportOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [motion, setMotion] = useState(true);
@@ -220,9 +221,18 @@ export function AvatarCustomizer({
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#8a6fc4]">Workshop</p>
             <h2 className="mt-1 text-xl font-bold tracking-tight text-[#30263d]">Build your bot</h2>
           </div>
-          <CategoryNav categories={editorCategories} activeCategory={activeCategory} onChange={setActiveCategory} />
+          <CategoryNav
+            categories={editorCategories}
+            activeCategory={activeCategory}
+            onChange={(category) => {
+              const from = editorCategories.findIndex((item) => item.id === activeCategory);
+              const to = editorCategories.findIndex((item) => item.id === category);
+              setPanelDirection(to >= from ? "forward" : "back");
+              setActiveCategory(category);
+            }}
+          />
           <div id={`avatar-editor-panel-${activeCategory}`} role="tabpanel" aria-labelledby={`avatar-editor-tab-${activeCategory}`} className="min-h-[31rem] p-5 sm:p-6">
-            <div key={activeCategory} className="editor-panel-content"><EditorPanel
+            <div key={activeCategory} className="editor-panel-content" data-direction={panelDirection}><EditorPanel
               category={activeCategory}
               config={config}
               updateConfig={updateConfig}
