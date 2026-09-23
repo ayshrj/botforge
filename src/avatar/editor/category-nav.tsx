@@ -13,14 +13,22 @@ export function CategoryNav({
   onChange,
 }: CategoryNavProps) {
   const trackRef = useRef<HTMLDivElement>(null);
-  const [indicator, setIndicator] = useState({ left: 0, top: 0, width: 0, height: 0, ready: false });
+  const [indicator, setIndicator] = useState({
+    left: 0,
+    top: 0,
+    width: 0,
+    height: 0,
+    ready: false,
+  });
 
   useLayoutEffect(() => {
     const track = trackRef.current;
     if (!track) return;
 
     const place = () => {
-      const selected = track.querySelector<HTMLElement>('[aria-selected="true"]');
+      const selected = track.querySelector<HTMLElement>(
+        '[aria-selected="true"]',
+      );
       if (!selected) return;
       setIndicator({
         left: selected.offsetLeft,
@@ -38,9 +46,14 @@ export function CategoryNav({
   }, [activeCategory, categories]);
 
   const moveFocus = (currentIndex: number, direction: number) => {
-    const next = categories[(currentIndex + direction + categories.length) % categories.length];
+    const next =
+      categories[
+        (currentIndex + direction + categories.length) % categories.length
+      ];
     onChange(next.id);
-    requestAnimationFrame(() => document.getElementById(`avatar-editor-tab-${next.id}`)?.focus());
+    requestAnimationFrame(() =>
+      document.getElementById(`avatar-editor-tab-${next.id}`)?.focus(),
+    );
   };
 
   return (
@@ -60,37 +73,61 @@ export function CategoryNav({
             transform: `translate(${indicator.left}px, ${indicator.top}px)`,
           }}
         />
-        {categories.map((category, index) => {
-          const selected = category.id === activeCategory;
+        {categories.map(
+          (
+            { id, icon, label, iconLucide: IconComponent, iconClassName },
+            index,
+          ) => {
+            const selected = id === activeCategory;
 
-          return (
-            <button
-              key={category.id}
-              id={`avatar-editor-tab-${category.id}`}
-              type="button"
-              role="tab"
-              aria-selected={selected}
-              aria-controls={`avatar-editor-panel-${category.id}`}
-              tabIndex={selected ? 0 : -1}
-              onClick={() => onChange(category.id)}
-              onKeyDown={(event) => {
-                if (event.key === "ArrowRight") { event.preventDefault(); moveFocus(index, 1); }
-                if (event.key === "ArrowLeft") { event.preventDefault(); moveFocus(index, -1); }
-              }}
-              className={[
-                "category-tab relative z-10 rounded-2xl px-3 py-2 text-xs font-semibold transition-colors sm:text-sm",
-                "focus-visible:outline-none focus-visible:ring-2",
-                "focus-visible:ring-white focus-visible:ring-offset-2",
-                "focus-visible:ring-[#7c5cff] focus-visible:ring-offset-[#f7f2e9]",
-                selected
-                  ? "text-white"
-                  : "text-[#746a7d] hover:bg-white/80 hover:text-[#30263d]",
-              ].join(" ")}
-            >
-              <span className="category-tab-icon mr-1.5 inline-block" aria-hidden="true">{category.icon}</span>{category.label}
-            </button>
-          );
-        })}
+            return (
+              <button
+                key={id}
+                id={`avatar-editor-tab-${id}`}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                aria-controls={`avatar-editor-panel-${id}`}
+                tabIndex={selected ? 0 : -1}
+                onClick={() => onChange(id)}
+                onKeyDown={(event) => {
+                  if (event.key === "ArrowRight") {
+                    event.preventDefault();
+                    moveFocus(index, 1);
+                  }
+                  if (event.key === "ArrowLeft") {
+                    event.preventDefault();
+                    moveFocus(index, -1);
+                  }
+                }}
+                className={[
+                  "category-tab relative z-10 rounded-2xl px-3 py-2 text-xs font-semibold transition-colors sm:text-sm",
+                  "flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2",
+                  "focus-visible:outline-none focus-visible:ring-2",
+                  "focus-visible:ring-white focus-visible:ring-offset-2",
+                  "focus-visible:ring-[#7c5cff] focus-visible:ring-offset-[#f7f2e9]",
+                  selected
+                    ? "text-white"
+                    : "text-[#746a7d] hover:bg-white/80 hover:text-[#30263d]",
+                ].join(" ")}
+              >
+                <span
+                  className="category-tab-icon mr-1.5 inline-block"
+                  aria-hidden="true"
+                >
+                  {IconComponent ? (
+                    <IconComponent
+                      className={`h-4 w-4 ${iconClassName || ""}`}
+                    />
+                  ) : (
+                    icon
+                  )}
+                </span>
+                {label}
+              </button>
+            );
+          },
+        )}
       </div>
     </div>
   );

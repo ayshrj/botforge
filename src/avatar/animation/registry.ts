@@ -1,3 +1,4 @@
+import { MoveVertical, MoveUp, MoveHorizontal } from "lucide-react";
 import {
   AVATAR_ANIMATION_IDS,
   type AvatarAnimationDefinition,
@@ -37,6 +38,7 @@ export const AVATAR_ANIMATIONS: readonly AvatarAnimationDefinition[] = [
     description: "Add a subtle relaxed breathing motion.",
     icon: "↕",
     channel: "movement",
+    iconLucide: MoveVertical,
     movementClassName: "avatar-motion-breathe",
   },
   {
@@ -44,6 +46,7 @@ export const AVATAR_ANIMATIONS: readonly AvatarAnimationDefinition[] = [
     label: "Float",
     description: "Slowly hover up and down.",
     icon: "↑",
+    iconLucide: MoveUp,
     channel: "movement",
     movementClassName: "avatar-motion-float",
   },
@@ -52,6 +55,7 @@ export const AVATAR_ANIMATIONS: readonly AvatarAnimationDefinition[] = [
     label: "Sway",
     description: "Gently rock from side to side.",
     icon: "↔",
+    iconLucide: MoveHorizontal,
     channel: "movement",
     movementClassName: "avatar-motion-sway",
   },

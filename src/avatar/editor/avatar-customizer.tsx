@@ -49,6 +49,15 @@ import {
   skinColorOptions,
   type EditorCategoryId,
 } from "./editor-options";
+import {
+  Astroid,
+  Braces,
+  LucideIcon,
+  MoveDown,
+  Redo2,
+  RotateCcw,
+  Undo2,
+} from "lucide-react";
 
 interface AvatarCustomizerProps {
   initialConfig?: AvatarConfig;
@@ -335,6 +344,7 @@ export function AvatarCustomizer({
           <ActionButton
             label="Undo"
             icon="↶"
+            iconLucide={Undo2}
             onClick={undo}
             disabled={!history.past.length}
           />
@@ -342,27 +352,41 @@ export function AvatarCustomizer({
           <ActionButton
             label="Redo"
             icon="↷"
+            iconLucide={Redo2}
             onClick={redo}
             disabled={!history.future.length}
           />
         </div>
 
         <div className="flex flex-wrap items-center justify-end gap-2">
-          <ActionButton label="Reset" icon="↺" onClick={resetAvatar} />
+          <ActionButton
+            label="Reset"
+            iconLucide={RotateCcw}
+            icon="↺"
+            onClick={resetAvatar}
+          />
 
           <ActionButton
             label="Randomize"
             icon="✦"
+            iconLucide={Astroid}
+            iconClassName="fill-current"
             onClick={randomize}
             featured
           />
 
-          <ActionButton label="Copy config" icon="{}" onClick={copyConfig} />
+          <ActionButton
+            label="Copy config"
+            icon="{}"
+            iconLucide={Braces}
+            onClick={copyConfig}
+          />
 
           <div className="relative">
             <ActionButton
               label="Export"
               icon="↓"
+              iconLucide={MoveDown}
               onClick={() => setExportOpen((open) => !open)}
             />
 
@@ -717,12 +741,16 @@ function Subsection({
 function ActionButton({
   label,
   icon,
+  iconLucide: IconComponent,
+  iconClassName,
   onClick,
   disabled,
   featured,
 }: {
   label: string;
   icon: string;
+  iconLucide?: LucideIcon;
+  iconClassName?: string;
 
   onClick: () => void;
 
@@ -738,7 +766,11 @@ function ActionButton({
       className={`action-button ${featured ? "action-button-featured" : ""}`}
     >
       <span className="action-icon" aria-hidden="true">
-        {icon}
+        {IconComponent ? (
+          <IconComponent className={`h-4 w-4 ${iconClassName || ""}`} />
+        ) : (
+          icon
+        )}
       </span>
 
       <span>{label}</span>

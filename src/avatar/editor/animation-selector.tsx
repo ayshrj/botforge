@@ -193,7 +193,11 @@ function AnimationCard({
         ].join(" ")}
         aria-hidden="true"
       >
-        {animation.icon}
+        {animation.iconLucide ? (
+          <animation.iconLucide className="h-4 w-4" />
+        ) : (
+          animation.icon
+        )}
       </span>
 
       <span className="block pr-6 text-sm font-bold">{animation.label}</span>

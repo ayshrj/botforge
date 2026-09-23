@@ -1,3 +1,5 @@
+import { LucideIcon } from "lucide-react";
+
 export const AVATAR_ANIMATION_IDS = [
   "animation-blink",
   "animation-wink-left",
@@ -18,6 +20,7 @@ interface AvatarAnimationBase {
   label: string;
   description: string;
   icon: string;
+  iconLucide?: LucideIcon;
 }
 
 export interface AvatarEyeAnimationDefinition extends AvatarAnimationBase {

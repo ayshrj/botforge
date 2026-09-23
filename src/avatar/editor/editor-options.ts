@@ -3,6 +3,22 @@ import {
   type AvatarConfig,
 } from "./avatar-editor-adapter";
 
+import {
+  MoveUpRight,
+  Circle,
+  CircleSmall,
+  ZodiacAquarius,
+  type LucideIcon,
+  CircleSlash2,
+  Infinity,
+  ChevronUp,
+  ChevronDown,
+  CircleDot,
+  Astroid,
+  CircleDashed,
+  SquareDashed,
+} from "lucide-react";
+
 import { DEFAULT_AVATAR_CONFIG } from "../types";
 
 export type EditorCategoryId =
@@ -23,6 +39,8 @@ export interface EditorCategory {
   id: EditorCategoryId;
   label: string;
   icon: string;
+  iconLucide: LucideIcon;
+  iconClassName?: string;
 }
 
 export interface ColorOption {
@@ -36,61 +54,75 @@ export const editorCategories: readonly EditorCategory[] = [
     id: "pose",
     label: "Pose",
     icon: "↗",
+    iconLucide: MoveUpRight,
   },
   {
     id: "face",
     label: "Face",
     icon: "◯",
+    iconLucide: Circle,
   },
   {
     id: "skin",
     label: "Skin",
     icon: "●",
+    iconLucide: CircleSmall,
+    iconClassName: "fill-current",
   },
   {
     id: "hair",
     label: "Hair",
     icon: "⌁",
+    iconLucide: ZodiacAquarius,
   },
   {
     id: "hairColor",
     label: "Color",
     icon: "◐",
+    iconLucide: CircleSlash2,
   },
   {
     id: "glasses",
     label: "Glasses",
     icon: "∞",
+    iconLucide: Infinity,
   },
   {
     id: "facialHair",
     label: "Beard",
     icon: "⌄",
+    iconLucide: ChevronDown,
   },
   {
     id: "headwear",
     label: "Hats",
     icon: "⌃",
+    iconLucide: ChevronUp,
   },
   {
     id: "ears",
     label: "Ears",
     icon: "◖",
+    iconLucide: CircleDot,
   },
   {
     id: "accessories",
     label: "Extras",
     icon: "✦",
+    iconLucide: Astroid,
+    iconClassName: "fill-current",
   },
   {
     id: "background",
     label: "Backdrop",
     icon: "▣",
+    iconLucide: SquareDashed,
   },
   {
     id: "animation",
     label: "Animate",
     icon: "◌",
+    iconLucide: CircleDashed,
   },
 ] as const;
 
